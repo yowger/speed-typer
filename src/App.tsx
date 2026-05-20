@@ -5,11 +5,11 @@ import { cn } from "./utils/cn"
 
 const keySound1 = new Howl({
     src: ["/assets/sounds/key_press_1.mp3"],
-    volume: 0.5,
+    volume: 0.15,
 })
 const spaceKeySound = new Howl({
     src: ["/assets/sounds/space_key.mp3"],
-    volume: 0.5,
+    volume: 0.15,
 })
 
 const text =
