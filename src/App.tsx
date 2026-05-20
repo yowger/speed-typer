@@ -18,6 +18,7 @@ const words = text.split(" ").map((word, index, array) => {
 const SPACE = "\u00A0"
 
 type CharState = {
+    expected: string
     char: string
     status: "correct" | "incorrect"
 }
@@ -27,8 +28,36 @@ export default function App() {
     const [typed, setTyped] = useState<CharState[]>([])
     const [mistakes, setMistakes] = useState(0)
 
+    const accuracy =
+        typed.length > 0
+            ? Math.round(((typed.length - mistakes) / typed.length) * 100)
+            : 100
+
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === " " || event.key === "Backspace") {
+                event.preventDefault()
+            }
+
+            if (currentIndex >= text.length) {
+                return
+            }
+
+            if (event.key === "Backspace") {
+                if (currentIndex === 0) return
+
+                const lastTyped = typed[currentIndex - 1]
+
+                if (lastTyped?.status === "incorrect") {
+                    setMistakes((prev) => Math.max(prev - 1, 0))
+                }
+
+                setTyped((prev) => prev.slice(0, -1))
+                setCurrentIndex((prev) => Math.max(prev - 1, 0))
+
+                return
+            }
+
             if (event.key.length > 1 && event.key !== " ") return
 
             const expectedChar = text[currentIndex]
@@ -38,6 +67,7 @@ export default function App() {
             setTyped((prev) => [
                 ...prev,
                 {
+                    expected: expectedChar,
                     char: event.key,
                     status: isCorrect ? "correct" : "incorrect",
                 },
@@ -55,14 +85,16 @@ export default function App() {
         return () => {
             window.removeEventListener("keydown", handleKeyDown)
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex])
 
     let globalIndex = 0
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-black text-white">
-            <div className="mt-20 max-w-4xl">
-                <div className="flex flex-wrap gap-y-4 p-8 text-2xl font-mono leading-relaxed">
+        <div className="flex min-h-screen items-center bg-black text-white">
+            <div className="max-w-4xl">
+                <div className="flex flex-wrap p-8 text-2xl font-mono">
                     {words.map((word, wordIndex) => (
                         <div key={wordIndex} className="flex">
                             {word.map((char, charIndex) => {
@@ -105,8 +137,17 @@ export default function App() {
                     ))}
                 </div>
 
-                <div className="px-8 text-sm text-gray-400">
-                    Mistakes: {mistakes}
+                <div className="mt-8 flex items-center gap-4">
+                    <div className="px-8 text-sm text-gray-400">
+                        Mistakes: {mistakes}
+                    </div>
+                    <div className="px-8 text-sm text-gray-400">
+                        Accuracy: {accuracy}%
+                    </div>
+                    <div className="px-8 text-sm text-gray-400">
+                        WPM:{" "}
+                        {typed.length > 0 ? Math.round(typed.length / 5) : 0}
+                    </div>
                 </div>
             </div>
         </div>
