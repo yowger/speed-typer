@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react"
+import { Howl } from "howler"
 
 import { cn } from "./utils/cn"
 
-const keySound = new Audio("/assets/sounds/key_press_2.mp3")
-const spaceKeySound = new Audio("/assets/sounds/space_key.mp3")
+const keySound1 = new Howl({
+    src: ["/assets/sounds/key_press_1.mp3"],
+    volume: 0.5,
+})
+const spaceKeySound = new Howl({
+    src: ["/assets/sounds/space_key.mp3"],
+    volume: 0.5,
+})
 
 const text =
     "Biology explores the living world, covering organisms' structure, function, and evolution, with genetics and ecology being key areas. Modern tools like CRISPR allow for gene manipulation, while ecology examines environmental interactions. Biology's applications include medicine, agriculture, and conservation, making it essential for understanding life and addressing global challenges."
@@ -38,11 +45,11 @@ export default function App() {
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            keySound.currentTime = 0
-            keySound.play()
+            keySound1.rate(0.95 + Math.random() * 0.1)
+            keySound1.play()
 
             if (event.key === " ") {
-                spaceKeySound.currentTime = 0
+                spaceKeySound.rate(0.95 + Math.random() * 0.1)
                 spaceKeySound.play()
             }
 
