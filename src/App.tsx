@@ -1,25 +1,29 @@
 import { cn } from "./utils/cn"
 import { useTypingEngine } from "./core/engine/useTypingEngine"
 import { useTypingSounds } from "./core/sounds/useTypingSounds"
-
-const text =
-    "Biology explores the living world, covering organisms' structure, function, and evolution."
-
-const words = text.split(" ").map((word, index, array) => {
-    const chars = word.split("")
-
-    if (index !== array.length - 1) {
-        chars.push(" ")
-    }
-
-    return chars
-})
+import { createSentenceGenerator } from "./core/word_generator/sentenceGenerator"
+import { useState } from "react"
+import { getWordChars } from "./core/word_generator/utils"
 
 const SPACE = "\u00A0"
 
 export default function App() {
-    const { typed, currentIndex, mistakes, accuracy, wpm, lastInput } =
-        useTypingEngine(text)
+    const generator = createSentenceGenerator({ seed: 123 })
+    const [sentences] = useState(() => generator.nextBatch(5))
+    const words = getWordChars(sentences.join(" "))
+    const text = sentences.join(" ")
+
+    const {
+        typed,
+        currentIndex,
+        mistakes,
+        accuracy,
+        wpm,
+        lastInput,
+        remainingTime,
+        duration,
+        isTimedOut,
+    } = useTypingEngine(text, 30)
 
     useTypingSounds(lastInput)
 
@@ -28,14 +32,21 @@ export default function App() {
     return (
         <div className="flex min-h-screen bg-black text-white">
             <div className="mt-8 max-w-4xl">
+                <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
+                    <span>Time: {remainingTime}s</span>
+                    <span>Duration: {duration}s</span>
+
+                    {isTimedOut && (
+                        <span className="text-red-500">Finished</span>
+                    )}
+                </div>
+
                 <div className="flex flex-wrap gap-1 p-8 font-mono text-xl">
                     {words.map((word, wordIndex) => (
                         <div key={wordIndex} className="flex">
                             {word.map((char, charIndex) => {
                                 const typedChar = typed[globalIndex]
-
                                 const currentCharIndex = globalIndex
-
                                 globalIndex++
 
                                 return (
@@ -54,8 +65,9 @@ export default function App() {
                                                 char === " "
                                                 ? "bg-red-500/30"
                                                 : typedChar?.status ===
-                                                      "incorrect" &&
-                                                      "text-red-500",
+                                                    "incorrect"
+                                                  ? "text-red-500"
+                                                  : "",
 
                                             !typedChar &&
                                                 currentCharIndex !==
