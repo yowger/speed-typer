@@ -16,6 +16,6 @@ export const backspaceSound = new Howl({
 })
 
 export const errorSound = new Howl({
-    src: ["/assets/sounds/error.mp3"],
+    src: ["/assets/sounds/key_press_2.mp3"],
     volume: 0.15,
 })
