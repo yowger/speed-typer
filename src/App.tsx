@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react"
 import { cn } from "./utils/cn"
 import { useTypingEngine } from "./core/engine/useTypingEngine"
 import { useTypingSounds } from "./core/sounds/useTypingSounds"
-import { createSentenceGenerator } from "./core/word_generator/sentenceGenerator"
-import { getWordChars } from "./core/word_generator/utils"
+import { createSentenceGenerator } from "./features/typing/sentenceGenerator"
+import { getWordChars } from "./features/typing/utils"
 
 const SPACE = "\u00A0"
 
