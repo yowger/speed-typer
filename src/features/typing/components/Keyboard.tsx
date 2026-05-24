@@ -42,7 +42,7 @@ export function Keyboard({ lastInput }: KeyboardProps) {
     }, [lastInput])
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 items-center">
             {KEYBOARD_ROWS.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex gap-2">
                     {row.map((item) => {
@@ -55,8 +55,10 @@ export function Keyboard({ lastInput }: KeyboardProps) {
                             <KeyboardKey
                                 key={item.key}
                                 label={item.label ?? item.key}
+                                shiftLabel={item.shiftLabel}
                                 state={state}
                                 wide={item.wide}
+                                extraWide={item.extraWide}
                             />
                         )
                     })}

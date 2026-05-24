@@ -58,7 +58,7 @@ export default function App() {
 
     return (
         <div className="flex flex-col gap-24 min-h-screen bg-black text-white">
-            <div className="mt-8 max-w-4xl">
+            <div className="mt-8 max-w-4xl self-center">
                 <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
                     <span>Time: {remainingTime}s</span>
                     <span>Duration: {duration}s</span>
