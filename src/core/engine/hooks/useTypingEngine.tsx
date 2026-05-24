@@ -8,6 +8,7 @@ export type CharState = {
 
 export type LastInput = {
     key: string
+    code: string
     status: "correct" | "incorrect"
 } | null
 
@@ -88,11 +89,12 @@ export function useTypingEngine(
 
         setLastInput({
             key: "Backspace",
+            code: "Backspace",
             status: "correct",
         })
     }
 
-    const handleCharacterInput = (key: string) => {
+    const handleCharacterInput = (key: string, code: string) => {
         if (!started) setStarted(true)
 
         const expectedChar = text[currentIndex]
@@ -114,6 +116,7 @@ export function useTypingEngine(
 
         setLastInput({
             key,
+            code,
             status: nextChar.status,
         })
     }
@@ -135,7 +138,7 @@ export function useTypingEngine(
                 return
             }
 
-            handleCharacterInput(event.key)
+            handleCharacterInput(event.key, event.code)
         }
 
         window.addEventListener("keydown", handleKeyDown)

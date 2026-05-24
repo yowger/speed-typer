@@ -1,5 +1,5 @@
 export type KeyboardKeyItem = {
-    key: string
+    code: string
     label?: string
     shiftLabel?: string
     wide?: boolean
@@ -8,66 +8,64 @@ export type KeyboardKeyItem = {
 
 export const KEYBOARD_ROWS: KeyboardKeyItem[][] = [
     [
-        { key: "`", label: "`", shiftLabel: "~" },
-        { key: "1", shiftLabel: "!" },
-        { key: "2", shiftLabel: "@" },
-        { key: "3", shiftLabel: "#" },
-        { key: "4", shiftLabel: "$" },
-        { key: "5", shiftLabel: "%" },
-        { key: "6", shiftLabel: "^" },
-        { key: "7", shiftLabel: "&" },
-        { key: "8", shiftLabel: "*" },
-        { key: "9", shiftLabel: "(" },
-        { key: "0", shiftLabel: ")" },
-        { key: "-", shiftLabel: "_" },
-        { key: "=", shiftLabel: "+" },
+        { code: "Backquote", label: "`", shiftLabel: "~" },
+        { code: "Digit1", label: "1", shiftLabel: "!" },
+        { code: "Digit2", label: "2", shiftLabel: "@" },
+        { code: "Digit3", label: "3", shiftLabel: "#" },
+        { code: "Digit4", label: "4", shiftLabel: "$" },
+        { code: "Digit5", label: "5", shiftLabel: "%" },
+        { code: "Digit6", label: "6", shiftLabel: "^" },
+        { code: "Digit7", label: "7", shiftLabel: "&" },
+        { code: "Digit8", label: "8", shiftLabel: "*" },
+        { code: "Digit9", label: "9", shiftLabel: "(" },
+        { code: "Digit0", label: "0", shiftLabel: ")" },
+        { code: "Minus", label: "-", shiftLabel: "_" },
+        { code: "Equal", label: "=", shiftLabel: "+" },
         {
-            key: "Backspace",
+            code: "Backspace",
             label: "Backspace",
             wide: true,
         },
     ],
-
     [
         {
-            key: "Tab",
+            code: "Tab",
             label: "Tab",
             wide: true,
         },
-        { key: "q" },
-        { key: "w" },
-        { key: "e" },
-        { key: "r" },
-        { key: "t" },
-        { key: "y" },
-        { key: "u" },
-        { key: "i" },
-        { key: "o" },
-        { key: "p" },
-        { key: "[", shiftLabel: "{" },
-        { key: "]", shiftLabel: "}" },
-        { key: "\\", shiftLabel: "|" },
+        { code: "KeyQ", label: "q" },
+        { code: "KeyW", label: "w" },
+        { code: "KeyE", label: "e" },
+        { code: "KeyR", label: "r" },
+        { code: "KeyT", label: "t" },
+        { code: "KeyY", label: "y" },
+        { code: "KeyU", label: "u" },
+        { code: "KeyI", label: "i" },
+        { code: "KeyO", label: "o" },
+        { code: "KeyP", label: "p" },
+        { code: "BracketLeft", label: "[", shiftLabel: "{" },
+        { code: "BracketRight", label: "]", shiftLabel: "}" },
+        { code: "Backslash", label: "\\", shiftLabel: "|" },
     ],
-
     [
         {
-            key: "CapsLock",
+            code: "CapsLock",
             label: "Caps",
             wide: true,
         },
-        { key: "a" },
-        { key: "s" },
-        { key: "d" },
-        { key: "f" },
-        { key: "g" },
-        { key: "h" },
-        { key: "j" },
-        { key: "k" },
-        { key: "l" },
-        { key: ";", shiftLabel: ":" },
-        { key: "'", shiftLabel: '"' },
+        { code: "KeyA", label: "a" },
+        { code: "KeyS", label: "s" },
+        { code: "KeyD", label: "d" },
+        { code: "KeyF", label: "f" },
+        { code: "KeyG", label: "g" },
+        { code: "KeyH", label: "h" },
+        { code: "KeyJ", label: "j" },
+        { code: "KeyK", label: "k" },
+        { code: "KeyL", label: "l" },
+        { code: "Semicolon", label: ";", shiftLabel: ":" },
+        { code: "Quote", label: "'", shiftLabel: '"' },
         {
-            key: "Enter",
+            code: "Enter",
             label: "Enter",
             wide: true,
         },
@@ -75,22 +73,25 @@ export const KEYBOARD_ROWS: KeyboardKeyItem[][] = [
 
     [
         {
-            key: "Shift",
+            code: "ShiftLeft",
             label: "Shift",
             wide: true,
         },
-        { key: "z" },
-        { key: "x" },
-        { key: "c" },
-        { key: "v" },
-        { key: "b" },
-        { key: "n" },
-        { key: "m" },
-        { key: ",", shiftLabel: "<" },
-        { key: ".", shiftLabel: ">" },
-        { key: "/", shiftLabel: "?" },
+
+        { code: "KeyZ", label: "z" },
+        { code: "KeyX", label: "x" },
+        { code: "KeyC", label: "c" },
+        { code: "KeyV", label: "v" },
+        { code: "KeyB", label: "b" },
+        { code: "KeyN", label: "n" },
+        { code: "KeyM", label: "m" },
+
+        { code: "Comma", label: ",", shiftLabel: "<" },
+        { code: "Period", label: ".", shiftLabel: ">" },
+        { code: "Slash", label: "/", shiftLabel: "?" },
+
         {
-            key: "ShiftRight",
+            code: "ShiftRight",
             label: "Shift",
             wide: true,
         },
@@ -98,29 +99,49 @@ export const KEYBOARD_ROWS: KeyboardKeyItem[][] = [
 
     [
         {
-            key: "Control",
+            code: "ControlLeft",
             label: "Ctrl",
             wide: true,
         },
+
         {
-            key: "Alt",
+            code: "MetaLeft",
+            label: "Win",
+            wide: true,
+        },
+
+        {
+            code: "AltLeft",
             label: "Alt",
             wide: true,
         },
 
         {
-            key: " ",
+            code: "Space",
             label: "Space",
             extraWide: true,
         },
 
         {
-            key: "AltRight",
+            code: "AltRight",
             label: "Alt",
             wide: true,
         },
+
         {
-            key: "ControlRight",
+            code: "MetaRight",
+            label: "Win",
+            wide: true,
+        },
+
+        {
+            code: "ContextMenu",
+            label: "Menu",
+            wide: true,
+        },
+
+        {
+            code: "ControlRight",
             label: "Ctrl",
             wide: true,
         },

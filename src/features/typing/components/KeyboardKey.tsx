@@ -37,7 +37,7 @@ export function KeyboardKey({
         >
             <div className="flex flex-col items-center justify-center leading-none">
                 {shiftLabel && (
-                    <span className="text-[10px] text-gray-400">
+                    <span className="text-sm font-semibold text-gray-400">
                         {shiftLabel}
                     </span>
                 )}
