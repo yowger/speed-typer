@@ -5,6 +5,7 @@ import { useTypingEngine } from "./core/engine/hooks/useTypingEngine"
 import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { createSentenceGenerator } from "./features/word/utils/sentenceGenerator"
 import { getWordChars } from "./features/word/utils/utils"
+import { Keyboard } from "./features/typing/components/Keyboard"
 
 const SPACE = "\u00A0"
 
@@ -56,7 +57,7 @@ export default function App() {
     let globalIndex = 0
 
     return (
-        <div className="flex min-h-screen bg-black text-white">
+        <div className="flex flex-col gap-24 min-h-screen bg-black text-white">
             <div className="mt-8 max-w-4xl">
                 <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
                     <span>Time: {remainingTime}s</span>
@@ -132,6 +133,8 @@ export default function App() {
                     <div className="px-8 text-sm text-gray-400">WPM: {wpm}</div>
                 </div>
             </div>
+
+            <Keyboard lastInput={lastInput} />
         </div>
     )
 }
