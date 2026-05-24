@@ -9,6 +9,8 @@ import { getWordChars } from "./core/word_generator/utils"
 const SPACE = "\u00A0"
 
 export default function App() {
+    const containerRef = useRef<HTMLDivElement | null>(null)
+    const currentCharRef = useRef<HTMLSpanElement | null>(null)
     const generatorRef = useRef(createSentenceGenerator())
     const [sentences, setSentences] = useState<string[]>([])
     const words = getWordChars(sentences.join(" "))
@@ -24,23 +26,32 @@ export default function App() {
         remainingTime,
         duration,
         isTimedOut,
-    } = useTypingEngine(text, 60)
+    } = useTypingEngine(text, 120)
 
     useTypingSounds(lastInput)
 
     const shouldLoadMore = currentIndex > text.length * 0.8
 
     useEffect(() => {
-        const initialSentences = generatorRef.current.nextBatch(5)
+        const initialSentences = generatorRef.current.nextBatch(4)
         setSentences(initialSentences)
     }, [])
 
     useEffect(() => {
         if (!shouldLoadMore) return
 
-        const newSentences = generatorRef.current.nextBatch(3)
+        const newSentences = generatorRef.current.nextBatch(4)
         setSentences((prev) => [...prev, ...newSentences])
     }, [shouldLoadMore])
+
+    useEffect(() => {
+        if (!currentCharRef.current) return
+
+        currentCharRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        })
+    }, [currentIndex])
 
     let globalIndex = 0
 
@@ -56,46 +67,57 @@ export default function App() {
                     )}
                 </div>
 
-                <div className="flex flex-wrap gap-1 p-8 font-mono text-xl">
-                    {words.map((word, wordIndex) => (
-                        <div key={wordIndex} className="flex">
-                            {word.map((char, charIndex) => {
-                                const typedChar = typed[globalIndex]
-                                const currentCharIndex = globalIndex
-                                globalIndex++
+                <div ref={containerRef} className="p-8 h-52 overflow-y-auto">
+                    <div className="flex flex-wrap text-xl font-mono gap-1">
+                        {words.map((word, wordIndex) => (
+                            <div key={wordIndex} className="flex">
+                                {word.map((char, charIndex) => {
+                                    const typedChar = typed[globalIndex]
+                                    const currentCharIndex = globalIndex
+                                    const isCurrentChar =
+                                        currentCharIndex === currentIndex
+                                    globalIndex++
 
-                                return (
-                                    <span
-                                        key={charIndex}
-                                        className={cn(
-                                            "border-b-2 border-transparent transition-colors",
+                                    return (
+                                        <span
+                                            key={charIndex}
+                                            ref={
+                                                isCurrentChar
+                                                    ? currentCharRef
+                                                    : null
+                                            }
+                                            className={cn(
+                                                "border-b-4 border-transparent transition-colors",
 
-                                            currentCharIndex === currentIndex &&
-                                                "border-b-4 border-white",
-
-                                            typedChar?.status === "correct" &&
-                                                "text-green-500",
-
-                                            typedChar?.status === "incorrect" &&
-                                                char === " "
-                                                ? "bg-red-500/30"
-                                                : typedChar?.status ===
-                                                    "incorrect"
-                                                  ? "text-red-500"
-                                                  : "",
-
-                                            !typedChar &&
-                                                currentCharIndex !==
+                                                currentCharIndex ===
                                                     currentIndex &&
-                                                "text-gray-500",
-                                        )}
-                                    >
-                                        {char === " " ? SPACE : char}
-                                    </span>
-                                )
-                            })}
-                        </div>
-                    ))}
+                                                    "border-b-4 border-white",
+
+                                                typedChar?.status ===
+                                                    "correct" &&
+                                                    "text-green-500",
+
+                                                typedChar?.status ===
+                                                    "incorrect" && char === " "
+                                                    ? "bg-red-500/30"
+                                                    : typedChar?.status ===
+                                                        "incorrect"
+                                                      ? "text-red-500"
+                                                      : "",
+
+                                                !typedChar &&
+                                                    currentCharIndex !==
+                                                        currentIndex &&
+                                                    "text-gray-500",
+                                            )}
+                                        >
+                                            {char === " " ? SPACE : char}
+                                        </span>
+                                    )
+                                })}
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="mt-4 flex items-center gap-4">
