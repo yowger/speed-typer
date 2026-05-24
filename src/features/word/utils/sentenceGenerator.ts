@@ -1,4 +1,4 @@
-import { SENTENCES } from "./sentences"
+import { SENTENCES } from "../sentences"
 import { createSeededRandom } from "./utils"
 
 type GeneratorOptions = {

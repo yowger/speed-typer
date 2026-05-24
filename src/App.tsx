@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 
 import { cn } from "./utils/cn"
-import { useTypingEngine } from "./core/engine/useTypingEngine"
-import { useTypingSounds } from "./core/sounds/useTypingSounds"
-import { createSentenceGenerator } from "./features/typing/sentenceGenerator"
-import { getWordChars } from "./features/typing/utils"
+import { useTypingEngine } from "./core/engine/hooks/useTypingEngine"
+import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
+import { createSentenceGenerator } from "./features/word/utils/sentenceGenerator"
+import { getWordChars } from "./features/word/utils/utils"
 
 const SPACE = "\u00A0"
 

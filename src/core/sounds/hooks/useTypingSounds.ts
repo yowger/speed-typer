@@ -1,8 +1,8 @@
 import { useEffect } from "react"
 
-import type { LastInput } from "../engine/useTypingEngine"
+import type { LastInput } from "../../engine/hooks/useTypingEngine"
 
-import { backspaceSound, errorSound, keySound, spaceSound } from "./sounds"
+import { backspaceSound, errorSound, keySound, spaceSound } from "../sounds"
 
 export function useTypingSounds(lastInput: LastInput) {
     useEffect(() => {
