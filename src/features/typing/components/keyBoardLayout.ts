@@ -105,12 +105,6 @@ export const KEYBOARD_ROWS: KeyboardKeyItem[][] = [
         },
 
         {
-            code: "MetaLeft",
-            label: "Win",
-            wide: true,
-        },
-
-        {
             code: "AltLeft",
             label: "Alt",
             wide: true,
@@ -125,18 +119,6 @@ export const KEYBOARD_ROWS: KeyboardKeyItem[][] = [
         {
             code: "AltRight",
             label: "Alt",
-            wide: true,
-        },
-
-        {
-            code: "MetaRight",
-            label: "Win",
-            wide: true,
-        },
-
-        {
-            code: "ContextMenu",
-            label: "Menu",
             wide: true,
         },
 
