@@ -1,15 +1,16 @@
+import { useEffect, useRef, useState } from "react"
+
 import { cn } from "./utils/cn"
 import { useTypingEngine } from "./core/engine/useTypingEngine"
 import { useTypingSounds } from "./core/sounds/useTypingSounds"
 import { createSentenceGenerator } from "./core/word_generator/sentenceGenerator"
-import { useState } from "react"
 import { getWordChars } from "./core/word_generator/utils"
 
 const SPACE = "\u00A0"
 
 export default function App() {
-    const generator = createSentenceGenerator({ seed: 123 })
-    const [sentences] = useState(() => generator.nextBatch(5))
+    const generatorRef = useRef(createSentenceGenerator())
+    const [sentences, setSentences] = useState<string[]>([])
     const words = getWordChars(sentences.join(" "))
     const text = sentences.join(" ")
 
@@ -23,9 +24,23 @@ export default function App() {
         remainingTime,
         duration,
         isTimedOut,
-    } = useTypingEngine(text, 30)
+    } = useTypingEngine(text, 60)
 
     useTypingSounds(lastInput)
+
+    const shouldLoadMore = currentIndex > text.length * 0.8
+
+    useEffect(() => {
+        const initialSentences = generatorRef.current.nextBatch(5)
+        setSentences(initialSentences)
+    }, [])
+
+    useEffect(() => {
+        if (!shouldLoadMore) return
+
+        const newSentences = generatorRef.current.nextBatch(3)
+        setSentences((prev) => [...prev, ...newSentences])
+    }, [shouldLoadMore])
 
     let globalIndex = 0
 
