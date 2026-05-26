@@ -1,19 +1,20 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
-export type CharState = {
+export type TypedChar = {
     expected: string
+    code: string
     typed: string
     status: "correct" | "incorrect"
+    timestamp: number
 }
 
 export type LastInput = {
-    key: string
     code: string
     status: "correct" | "incorrect"
 } | null
 
 type UseTypingEngineReturn = {
-    typed: CharState[]
+    typed: TypedChar[]
     currentIndex: number
     mistakes: number
     accuracy: number
@@ -30,11 +31,12 @@ export function useTypingEngine(
     duration: number = 30,
 ): UseTypingEngineReturn {
     const [currentIndex, setCurrentIndex] = useState(0)
-    const [typed, setTyped] = useState<CharState[]>([])
+    const [typed, setTyped] = useState<TypedChar[]>([])
     const [mistakes, setMistakes] = useState(0)
     const [lastInput, setLastInput] = useState<LastInput>(null)
     const [remainingTime, setRemainingTime] = useState(duration)
     const [started, setStarted] = useState(false)
+    const sessionStartTimeRef = useRef<number | null>(null)
 
     const isTimedOut = remainingTime <= 0
 
@@ -88,22 +90,27 @@ export function useTypingEngine(
         setCurrentIndex((prev) => Math.max(prev - 1, 0))
 
         setLastInput({
-            key: "Backspace",
             code: "Backspace",
             status: "correct",
         })
     }
 
     const handleCharacterInput = (key: string, code: string) => {
-        if (!started) setStarted(true)
+        if (!started) {
+            setStarted(true)
+            sessionStartTimeRef.current = performance.now()
+        }
 
         const expectedChar = text[currentIndex]
         const isCorrect = key === expectedChar
+        const timestamp = performance.now() - (sessionStartTimeRef.current ?? 0)
 
-        const nextChar: CharState = {
+        const nextChar: TypedChar = {
             expected: expectedChar,
             typed: key,
             status: isCorrect ? "correct" : "incorrect",
+            code: code,
+            timestamp,
         }
 
         setTyped((prev) => [...prev, nextChar])
@@ -115,7 +122,6 @@ export function useTypingEngine(
         setCurrentIndex((prev) => prev + 1)
 
         setLastInput({
-            key,
             code,
             status: nextChar.status,
         })
@@ -146,7 +152,7 @@ export function useTypingEngine(
         return () => window.removeEventListener("keydown", handleKeyDown)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentIndex, isFinished, text, typed])
+    }, [currentIndex, isFinished, text])
 
     return {
         typed,

@@ -6,7 +6,6 @@ import { KEYBOARD_ROWS } from "./keyBoardLayout"
 type KeyState = "active" | "correct" | "incorrect"
 
 type LastInput = {
-    key: string
     code: string
     status: KeyState
 } | null
