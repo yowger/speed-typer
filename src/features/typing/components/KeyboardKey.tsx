@@ -44,11 +44,11 @@ export function KeyboardKey({
     const heatStyle =
         mode === "heat"
             ? heat === "high"
-                ? "bg-orange-500/75 border-orange-500"
+                ? "bg-red-500/75 border-orange-500"
                 : heat === "medium"
-                  ? "bg-orange-500/45 border-orange-400"
+                  ? "bg-orange-500/50 border-orange-400"
                   : heat === "low"
-                    ? "bg-orange-500/25 border-orange-300"
+                    ? "bg-orange-500/30 border-orange-300"
                     : "bg-zinc-900 border-zinc-700"
             : ""
 
