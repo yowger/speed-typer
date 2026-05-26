@@ -1,4 +1,5 @@
 import { calculateAccuracy } from "./calculateAccuracy"
+import { calculateAdjustedWpm } from "./calculateAdjustedWpm"
 import { calculateCpm } from "./calculateCpm"
 import { calculateErrorRate } from "./calculateErrorRate"
 import { calculateRawWpm } from "./calculateRawWpm"
@@ -56,7 +57,7 @@ export function calculateTypingMetrics({
     }
 
     const rawWpm = calculateRawWpm(totalTyped, minutes)
-    const adjustedWpm = calculateRawWpm(correctChars, minutes)
+    const adjustedWpm = calculateAdjustedWpm(correctChars, minutes)
     const cpm = calculateCpm(totalTyped, minutes)
     const accuracy = calculateAccuracy(correctChars, totalTyped)
     const errorRate = calculateErrorRate(incorrectChars, totalTyped)
