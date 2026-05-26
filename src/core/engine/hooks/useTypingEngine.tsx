@@ -32,12 +32,12 @@ export function useTypingEngine(
 ): UseTypingEngineReturn {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [typed, setTyped] = useState<TypedChar[]>([])
-    const [mistakes, setMistakes] = useState(0)
     const [lastInput, setLastInput] = useState<LastInput>(null)
     const [remainingTime, setRemainingTime] = useState(duration)
     const [started, setStarted] = useState(false)
     const sessionStartTimeRef = useRef<number | null>(null)
 
+    const mistakes = typed.filter((t) => t.status === "incorrect").length
     const isTimedOut = remainingTime <= 0
 
     useEffect(() => {
@@ -71,7 +71,6 @@ export function useTypingEngine(
     const restart = () => {
         setCurrentIndex(0)
         setTyped([])
-        setMistakes(0)
         setLastInput(null)
         setRemainingTime(duration)
         setStarted(false)
@@ -79,12 +78,6 @@ export function useTypingEngine(
 
     const handleBackspace = () => {
         if (currentIndex === 0) return
-
-        const lastTyped = typed[currentIndex - 1]
-
-        if (lastTyped?.status === "incorrect") {
-            setMistakes((prev) => Math.max(prev - 1, 0))
-        }
 
         setTyped((prev) => prev.slice(0, -1))
         setCurrentIndex((prev) => Math.max(prev - 1, 0))
@@ -114,10 +107,6 @@ export function useTypingEngine(
         }
 
         setTyped((prev) => [...prev, nextChar])
-
-        if (!isCorrect) {
-            setMistakes((prev) => prev + 1)
-        }
 
         setCurrentIndex((prev) => prev + 1)
 
