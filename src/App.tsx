@@ -7,6 +7,7 @@ import { createSentenceGenerator } from "./features/word/utils/sentenceGenerator
 import { getWordChars } from "./features/word/utils/utils"
 import { Keyboard } from "./features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMetrics"
+import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
 
 const SPACE = "\u00A0"
 
@@ -36,6 +37,7 @@ export default function App() {
               elapsedMs,
           })
         : null
+    const heatmap = calculateKeyboardHeatmap(typed)
 
     const shouldLoadMore = currentIndex > text.length * 0.8
 
@@ -128,7 +130,11 @@ export default function App() {
                 </div>
             </div>
 
-            <Keyboard lastInput={lastInput} />
+            <Keyboard
+                lastInput={lastInput}
+                heatmap={heatmap}
+                mode={isTimedOut ? "heat" : "live"}
+            />
 
             {metrics && (
                 <div className="mt-8 grid grid-cols-2 gap-4 text-sm">

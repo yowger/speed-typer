@@ -10,21 +10,36 @@ type LastInput = {
     status: KeyState
 } | null
 
-type KeyboardProps = {
-    lastInput?: LastInput
-}
-
 type ActiveKey = {
     code: string
     state: KeyState
 } | null
 
-export function Keyboard({ lastInput }: KeyboardProps) {
+export type KeyHeat = {
+    presses: number
+    correct: number
+    incorrect: number
+}
+
+export type KeyboardHeatmap = Record<string, KeyHeat>
+
+type KeyboardMode = "live" | "heat"
+
+type KeyboardProps = {
+    mode?: KeyboardMode
+    lastInput?: LastInput
+    heatmap?: KeyboardHeatmap
+}
+
+export function Keyboard({ lastInput, heatmap, mode = "live" }: KeyboardProps) {
     const [activeKey, setActiveKey] = useState<ActiveKey>(null)
+
+    const isLive = mode === "live"
+    const isHeat = mode === "heat"
 
     useEffect(() => {
         function setKey() {
-            if (!lastInput) return
+            if (!isLive || !lastInput) return
 
             setActiveKey({
                 code: lastInput.code,
@@ -36,19 +51,30 @@ export function Keyboard({ lastInput }: KeyboardProps) {
 
         const timeout = setTimeout(() => {
             setActiveKey(null)
-        }, 150)
+        }, 120)
 
         return () => clearTimeout(timeout)
-    }, [lastInput])
+    }, [lastInput, isLive])
 
     return (
         <div className="flex flex-col gap-2 items-center">
             {KEYBOARD_ROWS.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex gap-2">
                     {row.map((item) => {
-                        const isActive = activeKey?.code === item.code
+                        const heat = heatmap?.[item.code]
 
-                        const state = isActive ? activeKey.state : undefined
+                        const isActive = isLive && activeKey?.code === item.code
+
+                        const state = isActive ? activeKey?.state : undefined
+
+                        const heatLevel =
+                            isHeat && heat?.presses
+                                ? heat.presses > 20
+                                    ? "high"
+                                    : heat.presses > 10
+                                      ? "medium"
+                                      : "low"
+                                : undefined
 
                         return (
                             <KeyboardKey
@@ -56,8 +82,11 @@ export function Keyboard({ lastInput }: KeyboardProps) {
                                 label={item.label ?? item.code}
                                 shiftLabel={item.shiftLabel}
                                 state={state}
+                                heat={heatLevel}
+                                presses={heat?.presses}
                                 wide={item.wide}
                                 extraWide={item.extraWide}
+                                mode={mode}
                             />
                         )
                     })}

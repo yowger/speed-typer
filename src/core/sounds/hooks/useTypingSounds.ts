@@ -1,8 +1,7 @@
 import { useEffect } from "react"
 
-import type { LastInput } from "../../engine/hooks/useTypingEngine"
-
 import { backspaceSound, errorSound, keySound, spaceSound } from "../sounds"
+import type { LastInput } from "../../engine/types/engine"
 
 export function useTypingSounds(lastInput: LastInput) {
     useEffect(() => {
@@ -10,14 +9,14 @@ export function useTypingSounds(lastInput: LastInput) {
 
         const randomRate = 0.95 + Math.random() * 0.1
 
-        if (lastInput.key === "Backspace") {
+        if (lastInput.code === "Backspace") {
             backspaceSound.rate(randomRate)
             backspaceSound.play()
 
             return
         }
 
-        if (lastInput.key === " ") {
+        if (lastInput.code === " ") {
             spaceSound.rate(randomRate)
             spaceSound.play()
 

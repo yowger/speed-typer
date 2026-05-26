@@ -1,17 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-export type TypedChar = {
-    expected: string
-    code: string
-    typed: string
-    status: "correct" | "incorrect"
-    timestamp: number
-}
-
-export type LastInput = {
-    code: string
-    status: "correct" | "incorrect"
-} | null
+import type { LastInput, TypedChar } from "../types/engine"
 
 type UseTypingEngineReturn = {
     typed: TypedChar[]
