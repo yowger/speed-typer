@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export type TypedChar = {
     expected: string
@@ -16,13 +16,10 @@ export type LastInput = {
 type UseTypingEngineReturn = {
     typed: TypedChar[]
     currentIndex: number
-    mistakes: number
-    accuracy: number
-    wpm: number
     lastInput: LastInput
-    restart: () => void
     duration: number
     remainingTime: number
+    restart: () => void
     isTimedOut: boolean
 }
 
@@ -37,7 +34,6 @@ export function useTypingEngine(
     const [started, setStarted] = useState(false)
     const sessionStartTimeRef = useRef<number | null>(null)
 
-    const mistakes = typed.filter((t) => t.status === "incorrect").length
     const isTimedOut = remainingTime <= 0
 
     useEffect(() => {
@@ -54,19 +50,6 @@ export function useTypingEngine(
 
         return () => clearInterval(interval)
     }, [started, isTimedOut])
-
-    const accuracy = useMemo(() => {
-        if (typed.length === 0) return 100
-        return Math.round(((typed.length - mistakes) / typed.length) * 100)
-    }, [typed.length, mistakes])
-
-    const wpm = useMemo(() => {
-        const minutes = (duration - remainingTime) / 60
-        if (minutes <= 0) return 0
-
-        const wordsTyped = typed.length / 5
-        return Math.round(wordsTyped / minutes)
-    }, [typed.length, remainingTime, duration])
 
     const restart = () => {
         setCurrentIndex(0)
@@ -146,9 +129,6 @@ export function useTypingEngine(
     return {
         typed,
         currentIndex,
-        mistakes,
-        accuracy,
-        wpm,
         lastInput,
         restart,
         duration,

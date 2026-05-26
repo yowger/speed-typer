@@ -6,6 +6,7 @@ import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { createSentenceGenerator } from "./features/word/utils/sentenceGenerator"
 import { getWordChars } from "./features/word/utils/utils"
 import { Keyboard } from "./features/typing/components/Keyboard"
+import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMetrics"
 
 const SPACE = "\u00A0"
 
@@ -20,16 +21,22 @@ export default function App() {
     const {
         typed,
         currentIndex,
-        mistakes,
-        accuracy,
-        wpm,
         lastInput,
         remainingTime,
         duration,
         isTimedOut,
-    } = useTypingEngine(text, 120)
+    } = useTypingEngine(text, 30)
 
     useTypingSounds(lastInput)
+
+    const elapsedMs = (duration - remainingTime) * 1000
+    const metrics = isTimedOut
+        ? calculateTypingMetrics({
+              typed,
+              elapsedMs,
+          })
+        : null
+    console.log("🚀 ~ App ~ metrics:", metrics)
 
     const shouldLoadMore = currentIndex > text.length * 0.8
 
@@ -121,7 +128,7 @@ export default function App() {
                     </div>
                 </div>
 
-                <div className="mt-4 flex items-center gap-4">
+                {/* <div className="mt-4 flex items-center gap-4">
                     <div className="px-8 text-sm text-gray-400">
                         Mistakes: {mistakes}
                     </div>
@@ -131,7 +138,7 @@ export default function App() {
                     </div>
 
                     <div className="px-8 text-sm text-gray-400">WPM: {wpm}</div>
-                </div>
+                </div> */}
             </div>
 
             <Keyboard lastInput={lastInput} />
