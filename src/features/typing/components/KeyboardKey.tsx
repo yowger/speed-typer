@@ -26,7 +26,7 @@ export function KeyboardKey({
     extraWide,
 }: KeyboardKeyProps) {
     const base =
-        "relative flex h-11 items-center justify-center rounded-md border transition-all duration-75 ease-out select-none"
+        "relative flex h-11 items-center justify-center rounded-md border transition-all duration-300 ease-out select-none"
 
     const size = extraWide ? "w-52" : wide ? "w-20" : "w-11"
 

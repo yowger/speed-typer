@@ -8,6 +8,7 @@ import { getWordChars } from "./features/word/utils/utils"
 import { Keyboard } from "./features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMetrics"
 import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
+import { useReplay } from "./features/replay/hooks/useReplay"
 
 const SPACE = "\u00A0"
 
@@ -30,6 +31,14 @@ export default function App() {
 
     useTypingSounds(lastInput)
 
+    const [isReplayMode, setIsReplayMode] = useState(false)
+    const { replayTyped, replayIndex } = useReplay({
+        typed,
+        isPlaying: isReplayMode,
+    })
+    const displayTyped = isReplayMode ? replayTyped : typed
+    const displayIndex = isReplayMode ? replayIndex + 1 : currentIndex
+
     const elapsedMs = (duration - remainingTime) * 1000
     const metrics = isTimedOut
         ? calculateTypingMetrics({
@@ -40,6 +49,17 @@ export default function App() {
     const heatmap = calculateKeyboardHeatmap(typed)
 
     const shouldLoadMore = currentIndex > text.length * 0.8
+
+    const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
+
+    const replayLastInput =
+        replayIndex >= 0
+            ? {
+                  code: replayTyped[replayIndex]?.code,
+                  status: replayTyped[replayIndex]?.status,
+              }
+            : null
+    const displayLastInput = isReplayMode ? replayLastInput : lastInput
 
     useEffect(() => {
         const initialSentences = generatorRef.current.nextBatch(4)
@@ -81,10 +101,10 @@ export default function App() {
                         {words.map((word, wordIndex) => (
                             <div key={wordIndex} className="flex">
                                 {word.map((char, charIndex) => {
-                                    const typedChar = typed[globalIndex]
+                                    const typedChar = displayTyped[globalIndex]
                                     const currentCharIndex = globalIndex
                                     const isCurrentChar =
-                                        currentCharIndex === currentIndex
+                                        currentCharIndex === displayIndex
                                     globalIndex++
 
                                     return (
@@ -99,7 +119,7 @@ export default function App() {
                                                 "border-b-4 border-transparent transition-colors",
 
                                                 currentCharIndex ===
-                                                    currentIndex &&
+                                                    displayIndex &&
                                                     "border-b-4 border-white",
 
                                                 typedChar?.status ===
@@ -116,7 +136,7 @@ export default function App() {
 
                                                 !typedChar &&
                                                     currentCharIndex !==
-                                                        currentIndex &&
+                                                        displayIndex &&
                                                     "text-gray-500",
                                             )}
                                         >
@@ -130,10 +150,21 @@ export default function App() {
                 </div>
             </div>
 
+            {isTimedOut && (
+                <div>
+                    <button
+                        onClick={() => setIsReplayMode(true)}
+                        className="rounded-lg border border-zinc-700 px-4 py-2"
+                    >
+                        Replay
+                    </button>
+                </div>
+            )}
+
             <Keyboard
-                lastInput={lastInput}
+                lastInput={displayLastInput}
                 heatmap={heatmap}
-                mode={isTimedOut ? "heat" : "live"}
+                mode={keyboardMode}
             />
 
             {metrics && (
