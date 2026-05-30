@@ -1,39 +1,22 @@
-import { useEffect, useReducer } from "react"
+import { useEffect } from "react"
 
 import { useTypingEngine } from "./useTypingEngine"
 import { useCountdown } from "./useCountdown"
-import { sessionReducer } from "../sessionReducer"
 import { useGenerateText } from "./useGenerateText"
+import { useSessionStateMachine } from "./useSessionStateMachine"
 
 export default function useTypingSession() {
-    const [session, dispatch] = useReducer(sessionReducer, {
-        mode: "idle",
-    })
     const textSystem = useGenerateText()
     const engine = useTypingEngine(textSystem.text)
     const timer = useCountdown(30)
 
-    const text = textSystem.text
-    const textLength = text.length
+    const session = useSessionStateMachine({
+        engine,
+        timer,
+        text: textSystem.text,
+    })
 
-    const shouldLoadMore = engine.currentIndex > textLength * 0.8
-
-    const isFirstInput = engine.currentIndex === 1 && session.mode === "idle"
-    const isFinished = engine.currentIndex >= textLength || timer.isExpired
-
-    const startReplay = () => {
-        dispatch({ type: "REPLAY" })
-
-        timer.stop()
-    }
-
-    const resetSession = () => {
-        dispatch({ type: "RESET" })
-
-        engine.restart()
-        timer.restart()
-        textSystem.reset()
-    }
+    const shouldLoadMore = engine.currentIndex > textSystem.text.length * 0.8
 
     useEffect(() => {
         if (shouldLoadMore) {
@@ -44,33 +27,33 @@ export default function useTypingSession() {
     }, [shouldLoadMore])
 
     useEffect(() => {
-        if (isFirstInput) {
-            dispatch({ type: "START_TYPING" })
+        if (session.mode === "typing" && !timer.isRunning) {
             timer.start()
         }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [engine.currentIndex, timer])
-
-    useEffect(() => {
-        if (isFinished && session.mode !== "results") {
-            dispatch({ type: "FINISH" })
+        if (session.mode === "results" && timer.isRunning) {
             timer.stop()
         }
-    }, [isFinished, session.mode, timer])
+    }, [session.mode, timer])
 
-    useEffect(() => {
-        if (timer.isExpired) {
-            dispatch({ type: "TIME_UP" })
-        }
-    }, [timer.isExpired])
+    const startReplay = () => {
+        session.replay()
+        timer.stop()
+    }
+
+    const resetSession = () => {
+        engine.restart()
+        timer.restart()
+        textSystem.reset()
+        session.reset()
+    }
 
     return {
         typed: engine.typed,
         currentIndex: engine.currentIndex,
         lastInput: engine.lastInput,
         words: textSystem.words,
-        text,
+        text: textSystem.text,
         remainingTime: timer.remainingTime,
         duration: timer.duration,
         isTimedOut: timer.isExpired,

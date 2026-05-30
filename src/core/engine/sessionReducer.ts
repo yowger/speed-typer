@@ -1,36 +1,41 @@
-export type SessionMode = "idle" | "typing" | "results" | "replay"
-
-export type SessionState = {
-    mode: SessionMode
+type State = {
+    mode: "idle" | "typing" | "results" | "replay"
 }
 
-export type SessionAction =
-    | { type: "START_TYPING" }
-    | { type: "FINISH" }
-    | { type: "TIME_UP" }
+type Action =
+    | { type: "ENGINE_UPDATE"; payload: { index: number; textLength: number } }
+    | { type: "TIMER_UPDATE"; payload: { isExpired: boolean } }
     | { type: "REPLAY" }
     | { type: "RESET" }
 
-export function sessionReducer(
-    state: SessionState,
-    action: SessionAction,
-): SessionState {
+export function sessionReducer(state: State, action: Action): State {
     switch (action.type) {
-        case "START_TYPING":
-            if (state.mode === "idle") {
-                return { mode: "typing" }
-            }
-            return state
-
-        case "FINISH":
-        case "TIME_UP":
-            return { mode: "results" }
-
         case "REPLAY":
             return { mode: "replay" }
 
         case "RESET":
             return { mode: "idle" }
+
+        case "ENGINE_UPDATE": {
+            const { index, textLength } = action.payload
+
+            if (state.mode === "idle" && index > 0) {
+                return { mode: "typing" }
+            }
+
+            if (index >= textLength) {
+                return { mode: "results" }
+            }
+
+            return state
+        }
+
+        case "TIMER_UPDATE": {
+            if (action.payload.isExpired) {
+                return { mode: "results" }
+            }
+            return state
+        }
 
         default:
             return state
