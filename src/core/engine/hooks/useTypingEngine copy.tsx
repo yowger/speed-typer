@@ -6,20 +6,46 @@ type UseTypingEngineReturn = {
     typed: TypedChar[]
     currentIndex: number
     lastInput: LastInput
+    duration: number
+    remainingTime: number
     restart: () => void
+    isTimedOut: boolean
 }
 
-export function useTypingEngine(text: string): UseTypingEngineReturn {
+export function useTypingEngine(
+    text: string,
+    duration: number = 30,
+): UseTypingEngineReturn {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [typed, setTyped] = useState<TypedChar[]>([])
     const [lastInput, setLastInput] = useState<LastInput>(null)
+    const [remainingTime, setRemainingTime] = useState(duration)
+    const [started, setStarted] = useState(false)
     const sessionStartTimeRef = useRef<number | null>(null)
+
+    const isTimedOut = remainingTime <= 0
+
+    useEffect(() => {
+        if (!started || isTimedOut) return
+
+        const interval = setInterval(() => {
+            setRemainingTime((prev) => {
+                if (prev <= 1) {
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [started, isTimedOut])
 
     const restart = () => {
         setCurrentIndex(0)
         setTyped([])
         setLastInput(null)
-        sessionStartTimeRef.current = null
+        setRemainingTime(duration)
+        setStarted(false)
     }
 
     const handleBackspace = () => {
@@ -35,13 +61,14 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
     }
 
     const handleCharacterInput = (key: string, code: string) => {
-        if (!sessionStartTimeRef.current) {
+        if (!started) {
+            setStarted(true)
             sessionStartTimeRef.current = performance.now()
         }
 
         const expectedChar = text[currentIndex]
         const isCorrect = key === expectedChar
-        const timestamp = performance.now() - sessionStartTimeRef.current
+        const timestamp = performance.now() - (sessionStartTimeRef.current ?? 0)
 
         const nextChar: TypedChar = {
             expected: expectedChar,
@@ -52,12 +79,16 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
         }
 
         setTyped((prev) => [...prev, nextChar])
+
         setCurrentIndex((prev) => prev + 1)
+
         setLastInput({
             code,
             status: nextChar.status,
         })
     }
+
+    const isFinished = isTimedOut || currentIndex >= text.length
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -66,7 +97,9 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
             const isSpecial = event.key.length > 1 && !isSpace && !isBackspace
 
             if (isSpace || isBackspace) event.preventDefault()
+            if (isFinished) return
             if (isSpecial) return
+
             if (isBackspace) {
                 handleBackspace()
                 return
@@ -80,12 +113,15 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
         return () => window.removeEventListener("keydown", handleKeyDown)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentIndex, text])
+    }, [currentIndex, isFinished, text])
 
     return {
         typed,
         currentIndex,
         lastInput,
         restart,
+        duration,
+        remainingTime,
+        isTimedOut,
     }
 }

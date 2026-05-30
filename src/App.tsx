@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-import { cn } from "./utils/cn"
+// import { cn } from "./utils/cn"
 import { useTypingEngine } from "./core/engine/hooks/useTypingEngine"
 import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { createSentenceGenerator } from "./features/word/utils/sentenceGenerator"
@@ -9,94 +9,116 @@ import { Keyboard } from "./features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMetrics"
 import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
 import { useReplay } from "./features/replay/hooks/useReplay"
+import TypingTextDisplay from "./ui/TypingTextDisplay"
+import Metrics from "./ui/Metrics"
+import useTypingSession from "./core/engine/hooks/useTypingSession"
 
-const SPACE = "\u00A0"
+// const SPACE = "\u00A0"
 
 export default function App() {
-    const containerRef = useRef<HTMLDivElement | null>(null)
-    const currentCharRef = useRef<HTMLSpanElement | null>(null)
-    const generatorRef = useRef(createSentenceGenerator())
-    const [sentences, setSentences] = useState<string[]>([])
-    const words = getWordChars(sentences.join(" "))
-    const text = sentences.join(" ")
-
     const {
-        typed,
         currentIndex,
+        typed,
+        words,
         lastInput,
         remainingTime,
         duration,
-        isTimedOut,
-    } = useTypingEngine(text, 30)
-
+        isResults,
+        mode,
+        resetSession,
+    } = useTypingSession()
     useTypingSounds(lastInput)
 
-    const [isReplayMode, setIsReplayMode] = useState(false)
-    const { replayTyped, replayIndex } = useReplay({
-        typed,
-        isPlaying: isReplayMode,
-    })
-    const displayTyped = isReplayMode ? replayTyped : typed
-    const displayIndex = isReplayMode ? replayIndex + 1 : currentIndex
+    const globalIndex = 0
+    const [soundEnabled, setSoundEnabled] = useState(false)
+    const [volume, setVolume] = useState(0.5)
 
-    const elapsedMs = (duration - remainingTime) * 1000
-    const metrics = isTimedOut
-        ? calculateTypingMetrics({
-              typed,
-              elapsedMs,
-          })
-        : null
-    const heatmap = calculateKeyboardHeatmap(typed)
+    // const currentCharRef = useRef<HTMLSpanElement | null>(null)
+    // const generatorRef = useRef(createSentenceGenerator())
+    // const [sentences, setSentences] = useState<string[]>([])
+    // const words = getWordChars(sentences.join(" "))
+    // const text = sentences.join(" ")
 
-    const shouldLoadMore = currentIndex > text.length * 0.8
+    // const {
+    //     typed,
+    //     currentIndex,
+    //     lastInput,
+    //     remainingTime,
+    //     duration,
+    //     isTimedOut,
+    // } = useTypingEngine(text, 30)
 
-    const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
+    // useTypingSounds(lastInput)
 
-    const replayLastInput =
-        replayIndex >= 0
-            ? {
-                  code: replayTyped[replayIndex]?.code,
-                  status: replayTyped[replayIndex]?.status,
-              }
-            : null
-    const displayLastInput = isReplayMode ? replayLastInput : lastInput
+    // const [isReplayMode, setIsReplayMode] = useState(false)
+    // const { replayTyped, replayIndex } = useReplay({
+    //     typed,
+    //     isPlaying: isReplayMode,
+    // })
+    // const displayTyped = isReplayMode ? replayTyped : typed
+    // const displayIndex = isReplayMode ? replayIndex + 1 : currentIndex
 
-    useEffect(() => {
-        const initialSentences = generatorRef.current.nextBatch(4)
-        setSentences(initialSentences)
-    }, [])
+    // const elapsedMs = (duration - remainingTime) * 1000
+    // const metrics = isTimedOut
+    //     ? calculateTypingMetrics({
+    //           typed,
+    //           elapsedMs,
+    //       })
+    //     : null
+    // const heatmap = calculateKeyboardHeatmap(typed)
 
-    useEffect(() => {
-        if (!shouldLoadMore) return
+    // const shouldLoadMore = currentIndex > text.length * 0.8
 
-        const newSentences = generatorRef.current.nextBatch(4)
-        setSentences((prev) => [...prev, ...newSentences])
-    }, [shouldLoadMore])
+    // const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
 
-    useEffect(() => {
-        if (!currentCharRef.current) return
+    // const replayLastInput =
+    //     replayIndex >= 0
+    //         ? {
+    //               code: replayTyped[replayIndex]?.code,
+    //               status: replayTyped[replayIndex]?.status,
+    //           }
+    //         : null
+    // const displayLastInput = isReplayMode ? replayLastInput : lastInput
 
-        currentCharRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-        })
-    }, [currentIndex])
+    // useEffect(() => {
+    //     const initialSentences = generatorRef.current.nextBatch(4)
+    //     setSentences(initialSentences)
+    // }, [])
 
-    let globalIndex = 0
+    // useEffect(() => {
+    //     if (!shouldLoadMore) return
+
+    //     const newSentences = generatorRef.current.nextBatch(4)
+    //     setSentences((prev) => [...prev, ...newSentences])
+    // }, [shouldLoadMore])
+
+    // useEffect(() => {
+    //     if (!currentCharRef.current) return
+
+    //     currentCharRef.current.scrollIntoView({
+    //         behavior: "smooth",
+    //         block: "center",
+    //     })
+    // }, [currentIndex])
+
+    // const globalIndex = 0
+
+    // const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
 
     return (
         <div className="flex flex-col gap-24 min-h-screen bg-black text-white">
             <div className="mt-8 max-w-4xl self-center">
                 <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
+                    <span>Mode: {mode}</span>
                     <span>Time: {remainingTime}s</span>
                     <span>Duration: {duration}s</span>
 
-                    {isTimedOut && (
+                    {isResults && (
                         <span className="text-red-500">Finished</span>
                     )}
                 </div>
 
-                <div ref={containerRef} className="p-8 h-52 overflow-y-auto">
+                {/* <div className="p-8 h-52 overflow-y-auto">
                     <div className="flex flex-wrap text-xl font-mono gap-1">
                         {words.map((word, wordIndex) => (
                             <div key={wordIndex} className="flex">
@@ -147,10 +169,26 @@ export default function App() {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
+
+                {/* <TypingTextDisplay
+                    displayIndex={displayIndex}
+                    displayTyped={displayTyped}
+                    words={words}
+                    globalIndex={globalIndex}
+                    currentIndex={currentIndex}
+                /> */}
+                <TypingTextDisplay
+                    displayIndex={currentIndex}
+                    displayTyped={typed}
+                    words={words}
+                    globalIndex={globalIndex}
+                />
+
+                {isResults && <button onClick={resetSession}>Restart</button>}
             </div>
 
-            {isTimedOut && (
+            {/* {isTimedOut && (
                 <div>
                     <button
                         onClick={() => setIsReplayMode(true)}
@@ -159,15 +197,15 @@ export default function App() {
                         Replay
                     </button>
                 </div>
-            )}
+            )} */}
 
             <Keyboard
-                lastInput={displayLastInput}
-                heatmap={heatmap}
-                mode={keyboardMode}
+                lastInput={lastInput}
+                // heatmap={heatmap}
+                // mode={keyboardMode}
             />
 
-            {metrics && (
+            {/* {metrics && (
                 <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
                     <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
                         <div className="text-zinc-500">Raw WPM</div>
@@ -211,7 +249,8 @@ export default function App() {
                         </div>
                     </div>
                 </div>
-            )}
+                <Metrics metrics={metrics} />
+            )} */}
         </div>
     )
 }
