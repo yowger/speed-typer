@@ -7,35 +7,17 @@ import { useSessionStateMachine } from "./useSessionStateMachine"
 
 export default function useTypingSession() {
     const [typingEnabled, setTypingEnabled] = useState(true)
+    const [typingDuration, setTypingDuration] = useState(30)
 
     const textSystem = useGenerateText()
     const engine = useTypingEngine(textSystem.text, { enabled: typingEnabled })
-    const timer = useCountdown(30)
+    const timer = useCountdown(typingDuration)
 
     const session = useSessionStateMachine({
         engine,
         timer,
         text: textSystem.text,
     })
-
-    useEffect(() => {
-        textSystem.onProgress(engine.currentIndex)
-    }, [engine.currentIndex, textSystem])
-
-    useEffect(() => {
-        if (session.mode === "typing" && !timer.isRunning) {
-            timer.start()
-        }
-
-        if (
-            (session.mode === "paused" ||
-                session.mode === "results" ||
-                session.mode === "replay") &&
-            timer.isRunning
-        ) {
-            timer.stop()
-        }
-    }, [session.mode, timer])
 
     const pause = () => {
         setTypingEnabled(false)
@@ -59,6 +41,31 @@ export default function useTypingSession() {
         session.reset()
     }
 
+    const handleDurationChange = (value: number) => {
+        setTypingDuration(value)
+
+        resetSession()
+    }
+
+    useEffect(() => {
+        textSystem.onProgress(engine.currentIndex)
+    }, [engine.currentIndex, textSystem])
+
+    useEffect(() => {
+        if (session.mode === "typing" && !timer.isRunning) {
+            timer.start()
+        }
+
+        if (
+            (session.mode === "paused" ||
+                session.mode === "results" ||
+                session.mode === "replay") &&
+            timer.isRunning
+        ) {
+            timer.stop()
+        }
+    }, [session.mode, timer])
+
     return {
         typed: engine.typed,
         currentIndex: engine.currentIndex,
@@ -78,5 +85,6 @@ export default function useTypingSession() {
         resume,
         startReplay,
         resetSession,
+        handleDurationChange,
     }
 }

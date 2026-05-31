@@ -29,6 +29,12 @@ export function useCountdown(duration: number) {
         setRunning(false)
     }, [duration])
 
+    useEffect(() => {
+        const setTime = () => setRemainingTime(duration)
+
+        setTime()
+    }, [duration])
+
     return {
         duration,
         remainingTime,
