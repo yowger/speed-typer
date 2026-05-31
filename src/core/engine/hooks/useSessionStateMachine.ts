@@ -34,11 +34,15 @@ export function useSessionStateMachine({ engine, timer, text }: SessionInput) {
 
     const replay = () => dispatch({ type: "REPLAY" })
     const reset = () => dispatch({ type: "RESET" })
+    const pause = () => dispatch({ type: "PAUSE" })
+    const resume = () => dispatch({ type: "RESUME" })
 
     return {
         mode: state.mode,
         dispatch,
         replay,
         reset,
+        pause,
+        resume,
     }
 }

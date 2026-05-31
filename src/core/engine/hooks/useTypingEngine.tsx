@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react"
 
 import type { LastInput, TypedChar } from "../types/engine"
 
+type UseTypingEngineOptions = {
+    enabled?: boolean
+}
+
 type UseTypingEngineReturn = {
     typed: TypedChar[]
     currentIndex: number
@@ -9,7 +13,11 @@ type UseTypingEngineReturn = {
     restart: () => void
 }
 
-export function useTypingEngine(text: string): UseTypingEngineReturn {
+export function useTypingEngine(
+    text: string,
+    options?: UseTypingEngineOptions,
+): UseTypingEngineReturn {
+    const { enabled = true } = options || {}
     const [currentIndex, setCurrentIndex] = useState(0)
     const [typed, setTyped] = useState<TypedChar[]>([])
     const [lastInput, setLastInput] = useState<LastInput>(null)
@@ -60,6 +68,8 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
     }
 
     useEffect(() => {
+        if (!enabled) return
+
         const handleKeyDown = (event: KeyboardEvent) => {
             const isBackspace = event.key === "Backspace"
             const isSpace = event.key === " "
@@ -80,7 +90,7 @@ export function useTypingEngine(text: string): UseTypingEngineReturn {
         return () => window.removeEventListener("keydown", handleKeyDown)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentIndex, text])
+    }, [currentIndex, enabled, text])
 
     return {
         typed,

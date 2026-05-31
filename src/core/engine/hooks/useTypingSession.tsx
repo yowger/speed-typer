@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import { useTypingEngine } from "./useTypingEngine"
 import { useCountdown } from "./useCountdown"
@@ -6,8 +6,10 @@ import { useGenerateText } from "./useGenerateText"
 import { useSessionStateMachine } from "./useSessionStateMachine"
 
 export default function useTypingSession() {
+    const [typingEnabled, setTypingEnabled] = useState(true)
+
     const textSystem = useGenerateText()
-    const engine = useTypingEngine(textSystem.text)
+    const engine = useTypingEngine(textSystem.text, { enabled: typingEnabled })
     const timer = useCountdown(30)
 
     const session = useSessionStateMachine({
@@ -16,25 +18,34 @@ export default function useTypingSession() {
         text: textSystem.text,
     })
 
-    const shouldLoadMore = engine.currentIndex > textSystem.text.length * 0.8
-
     useEffect(() => {
-        if (shouldLoadMore) {
-            textSystem.loadMore(engine.currentIndex)
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [shouldLoadMore])
+        textSystem.onProgress(engine.currentIndex)
+    }, [engine.currentIndex, textSystem])
 
     useEffect(() => {
         if (session.mode === "typing" && !timer.isRunning) {
             timer.start()
         }
 
-        if (session.mode === "results" && timer.isRunning) {
+        if (
+            (session.mode === "paused" ||
+                session.mode === "results" ||
+                session.mode === "replay") &&
+            timer.isRunning
+        ) {
             timer.stop()
         }
     }, [session.mode, timer])
+
+    const pause = () => {
+        setTypingEnabled(false)
+        session.pause()
+    }
+
+    const resume = () => {
+        setTypingEnabled(true)
+        session.resume()
+    }
 
     const startReplay = () => {
         session.replay()
@@ -60,8 +71,11 @@ export default function useTypingSession() {
         mode: session.mode,
         isIdle: session.mode === "idle",
         isTyping: session.mode === "typing",
+        isPaused: session.mode === "paused",
         isResults: session.mode === "results",
         isReplay: session.mode === "replay",
+        pause,
+        resume,
         startReplay,
         resetSession,
     }
