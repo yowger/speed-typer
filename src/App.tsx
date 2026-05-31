@@ -1,4 +1,4 @@
-import { useState } from "react"
+// import { useState } from "react"
 
 import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { Keyboard } from "./features/typing/components/Keyboard"
@@ -29,8 +29,8 @@ export default function App() {
     useTypingSounds(lastInput)
 
     const globalIndex = 0
-    const [soundEnabled, setSoundEnabled] = useState(false)
-    const [volume, setVolume] = useState(0.5)
+    // const [soundEnabled, setSoundEnabled] = useState(false)
+    // const [volume, setVolume] = useState(0.5)
 
     const elapsedMs = (duration - remainingTime) * 1000
     const metrics = calculateTypingMetrics({

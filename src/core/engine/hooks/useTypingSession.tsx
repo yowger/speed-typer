@@ -66,6 +66,18 @@ export default function useTypingSession() {
         }
     }, [session.mode, timer])
 
+    useEffect(() => {
+        const setTypingMode = () => {
+            if (session.mode === "idle" || session.mode === "typing") {
+                setTypingEnabled(true)
+            } else {
+                setTypingEnabled(false)
+            }
+        }
+
+        setTypingMode()
+    }, [session.mode])
+
     return {
         typed: engine.typed,
         currentIndex: engine.currentIndex,
