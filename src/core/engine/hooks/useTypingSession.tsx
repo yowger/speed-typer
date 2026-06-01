@@ -73,6 +73,7 @@ export default function useTypingSession() {
 
     return {
         typed: engine.typed,
+        keyEvents: engine.keyEvents,
         currentIndex: engine.currentIndex,
         lastInput: engine.lastInput,
         words: textSystem.words,

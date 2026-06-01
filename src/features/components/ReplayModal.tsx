@@ -4,37 +4,31 @@ import { Dialog, DialogPanel } from "@headlessui/react"
 import { useReplay } from "../replay/hooks/useReplay"
 import TypingTextDisplay from "../typing/components/TypingTextDisplay"
 
-import { type TypedChar } from "../replay/hooks/useReplay"
+import type { KeyEvent } from "../../core/engine/types/engine"
 
 type ReplayModalProps = {
     open: boolean
     onClose: () => void
-    typed: TypedChar[]
+    keyEvents: KeyEvent[]
     words: string[][]
 }
 
 export default function ReplayModal({
     open,
     onClose,
-    typed,
+    keyEvents,
     words,
 }: ReplayModalProps) {
     const [replayId, setReplayId] = useState(0)
 
     const { replayTyped, replayIndex } = useReplay({
-        typed,
+        keyEvents,
         replayId,
     })
 
-    const isFinished = replayTyped.length === typed.length
-    const isPlaying = replayTyped.length > 0 && !isFinished
+    const isFinished = replayTyped.length === keyEvents.length
 
     const play = () => {
-        setReplayId((v) => v + 1)
-    }
-
-    const restart = () => {
-        if (isPlaying) return
         setReplayId((v) => v + 1)
     }
 
@@ -47,18 +41,9 @@ export default function ReplayModal({
                     <div className="mb-4 flex gap-2">
                         <button
                             onClick={play}
-                            disabled={isPlaying}
                             className="rounded border px-3 py-1 disabled:opacity-50"
                         >
                             Play
-                        </button>
-
-                        <button
-                            onClick={restart}
-                            disabled={isPlaying}
-                            className="rounded border px-3 py-1 disabled:opacity-50"
-                        >
-                            Restart
                         </button>
 
                         <button
@@ -68,12 +53,22 @@ export default function ReplayModal({
                             Close
                         </button>
                     </div>
-
+                    \
+                    {isFinished && (
+                        <div className="mb-4 flex gap-2">
+                            <button
+                                onClick={play}
+                                className="rounded border px-3 py-1"
+                            >
+                                Replay
+                            </button>
+                        </div>
+                    )}
                     <TypingTextDisplay
                         displayIndex={replayIndex + 1}
                         displayTyped={replayTyped}
                         words={words}
-                        globalIndex={0}
+                        // globalIndex={0}
                     />
                 </DialogPanel>
             </div>

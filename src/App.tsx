@@ -15,6 +15,7 @@ export default function App() {
     const {
         currentIndex,
         typed,
+        keyEvents,
         words,
         lastInput,
         remainingTime,
@@ -30,19 +31,18 @@ export default function App() {
     } = useTypingSession()
     useTypingSounds(lastInput)
 
-    const globalIndex = 0
     // const [soundEnabled, setSoundEnabled] = useState(false)
     // const [volume, setVolume] = useState(0.5)
 
     const [isReplayOpen, setIsReplayOpen] = useState(false)
     const elapsedMs = (duration - remainingTime) * 1000
     const metrics = calculateTypingMetrics({
-        typed,
+        keyEvents,
         elapsedMs,
     })
 
     const keyboardMode = isResults ? "heat" : "live"
-    const heatmap = calculateKeyboardHeatmap(typed)
+    const heatmap = calculateKeyboardHeatmap(keyEvents)
 
     // const { replayTyped, replayIndex } = useReplay({
     //     typed,
@@ -92,7 +92,7 @@ export default function App() {
                     displayIndex={currentIndex}
                     displayTyped={typed}
                     words={words}
-                    globalIndex={globalIndex}
+                    // globalIndex={globalIndex}
                 />
 
                 <div>
@@ -130,7 +130,7 @@ export default function App() {
             <ReplayModal
                 open={isReplayOpen}
                 onClose={() => setIsReplayOpen(false)}
-                typed={typed}
+                keyEvents={keyEvents}
                 words={words}
             />
         </div>

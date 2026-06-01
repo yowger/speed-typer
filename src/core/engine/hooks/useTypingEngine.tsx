@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
-import type { LastInput, TypedChar } from "../types/engine"
+import type { KeyEvent, LastInput, TypedChar } from "../types/engine"
 
 type UseTypingEngineOptions = {
     enabled?: boolean
@@ -8,6 +8,7 @@ type UseTypingEngineOptions = {
 
 type UseTypingEngineReturn = {
     typed: TypedChar[]
+    keyEvents: KeyEvent[]
     currentIndex: number
     lastInput: LastInput
     restart: () => void
@@ -18,14 +19,40 @@ export function useTypingEngine(
     options?: UseTypingEngineOptions,
 ): UseTypingEngineReturn {
     const { enabled = true } = options || {}
-    const [currentIndex, setCurrentIndex] = useState(0)
+
+    const [keyEvents, setKeyEvents] = useState<KeyEvent[]>([])
     const [typed, setTyped] = useState<TypedChar[]>([])
+    const [currentIndex, setCurrentIndex] = useState(0)
     const [lastInput, setLastInput] = useState<LastInput>(null)
+
     const sessionStartTimeRef = useRef<number | null>(null)
 
+    const rebuildTyped = (events: KeyEvent[]): TypedChar[] => {
+        const result: TypedChar[] = []
+
+        for (const event of events) {
+            if (event.type === "input") {
+                result.push({
+                    expected: event.expected,
+                    typed: event.typed,
+                    code: event.code,
+                    status: event.status,
+                    timestamp: event.timestamp,
+                })
+            }
+
+            if (event.type === "backspace") {
+                result.pop()
+            }
+        }
+
+        return result
+    }
+
     const restart = () => {
-        setCurrentIndex(0)
+        setKeyEvents([])
         setTyped([])
+        setCurrentIndex(0)
         setLastInput(null)
         sessionStartTimeRef.current = null
     }
@@ -33,7 +60,18 @@ export function useTypingEngine(
     const handleBackspace = () => {
         if (currentIndex === 0) return
 
-        setTyped((prev) => prev.slice(0, -1))
+        const event: KeyEvent = {
+            type: "backspace",
+            code: "Backspace",
+            timestamp: performance.now(),
+        }
+
+        setKeyEvents((prev) => {
+            const next = [...prev, event]
+            setTyped(rebuildTyped(next))
+            return next
+        })
+
         setCurrentIndex((prev) => Math.max(prev - 1, 0))
 
         setLastInput({
@@ -51,19 +89,26 @@ export function useTypingEngine(
         const isCorrect = key === expectedChar
         const timestamp = performance.now() - sessionStartTimeRef.current
 
-        const nextChar: TypedChar = {
+        const event: KeyEvent = {
+            type: "input",
             expected: expectedChar,
             typed: key,
+            code,
             status: isCorrect ? "correct" : "incorrect",
-            code: code,
             timestamp,
         }
 
-        setTyped((prev) => [...prev, nextChar])
+        setKeyEvents((prev) => {
+            const next = [...prev, event]
+            setTyped(rebuildTyped(next))
+            return next
+        })
+
         setCurrentIndex((prev) => prev + 1)
+
         setLastInput({
             code,
-            status: nextChar.status,
+            status: event.status,
         })
     }
 
@@ -77,6 +122,7 @@ export function useTypingEngine(
 
             if (isSpace || isBackspace) event.preventDefault()
             if (isSpecial) return
+
             if (isBackspace) {
                 handleBackspace()
                 return
@@ -94,6 +140,7 @@ export function useTypingEngine(
 
     return {
         typed,
+        keyEvents: keyEvents,
         currentIndex,
         lastInput,
         restart,

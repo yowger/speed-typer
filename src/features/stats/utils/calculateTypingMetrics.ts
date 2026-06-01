@@ -4,19 +4,14 @@ import { calculateCpm } from "./calculateCpm"
 import { calculateErrorRate } from "./calculateErrorRate"
 import { calculateRawWpm } from "./calculateRawWpm"
 
-export type TypedChar = {
-    expected: string
-    typed: string
-    status: "correct" | "incorrect"
-    timestamp: number
-}
+import type { KeyEvent } from "../../../core/engine/types/engine"
 
 type Params = {
-    typed: TypedChar[]
+    keyEvents: KeyEvent[]
     elapsedMs: number
 }
 
-export type TypingMetrics = {
+export type TypingMetricsReturn = {
     rawWpm: number
     adjustedWpm: number
     accuracy: number
@@ -28,17 +23,21 @@ export type TypingMetrics = {
 }
 
 export function calculateTypingMetrics({
-    typed,
+    keyEvents,
     elapsedMs,
-}: Params): TypingMetrics {
-    const totalTyped = typed.length
+}: Params): TypingMetricsReturn {
+    const inputEvents = keyEvents.filter(
+        (e): e is Extract<KeyEvent, { type: "input" }> => e.type === "input",
+    )
 
-    const correctChars = typed.filter(
-        (char) => char.status === "correct",
+    const totalTyped = inputEvents.length
+
+    const correctChars = inputEvents.filter(
+        (e) => e.status === "correct",
     ).length
 
-    const incorrectChars = typed.filter(
-        (char) => char.status === "incorrect",
+    const incorrectChars = inputEvents.filter(
+        (e) => e.status === "incorrect",
     ).length
 
     const minutes = elapsedMs / 1000 / 60

@@ -1,54 +1,63 @@
 import { useEffect, useRef, useState } from "react"
-
-export type TypedChar = {
-    expected: string
-    typed: string
-    code: string
-    status: "correct" | "incorrect"
-    timestamp: number
-}
+import type { KeyEvent } from "../../../core/engine/types/engine"
 
 type Params = {
-    typed: TypedChar[]
+    keyEvents: KeyEvent[]
     replayId: number
 }
 
-export function useReplay({ typed, replayId }: Params) {
-    const [replayTyped, setReplayTyped] = useState<TypedChar[]>([])
+type ReplayTypedChar = Extract<KeyEvent, { type: "input" }>
+
+export function useReplay({ keyEvents, replayId }: Params) {
+    const [replayTyped, setReplayTyped] = useState<ReplayTypedChar[]>([])
     const [replayIndex, setReplayIndex] = useState(-1)
 
     const timeoutsRef = useRef<number[]>([])
 
     useEffect(() => {
-        function clear() {
-            timeoutsRef.current.forEach(clearTimeout)
-            timeoutsRef.current = []
-        }
+        timeoutsRef.current.forEach(clearTimeout)
+        timeoutsRef.current = []
 
-        function reset() {
+        const setReplay = () => {
             setReplayTyped([])
             setReplayIndex(-1)
         }
+        setReplay()
 
-        clear()
-        reset()
+        if (keyEvents.length === 0) return
 
-        if (typed.length === 0) return
+        const startTime = keyEvents[0].timestamp
 
-        typed.forEach((char, index) => {
+        let state: ReplayTypedChar[] = []
+
+        keyEvents.forEach((event, index) => {
+            const delay = event.timestamp - startTime
+
             const timeout = window.setTimeout(() => {
-                setReplayTyped((prev) => [...prev, char])
+                if (event.type === "input") {
+                    state = [...state, event]
+                }
+
+                if (event.type === "backspace") {
+                    state = state.slice(0, -1)
+                }
+
+                setReplayTyped(state)
                 setReplayIndex(index)
-            }, char.timestamp)
+            }, delay)
 
             timeoutsRef.current.push(timeout)
         })
 
-        return clear
-    }, [typed, replayId])
+        return () => {
+            timeoutsRef.current.forEach(clearTimeout)
+        }
+    }, [keyEvents, replayId])
 
     return {
         replayTyped,
         replayIndex,
     }
 }
+
+// TODO FIX REPLAY. jumpy.
