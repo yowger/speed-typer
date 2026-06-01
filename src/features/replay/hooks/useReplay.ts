@@ -10,29 +10,29 @@ export type TypedChar = {
 
 type Params = {
     typed: TypedChar[]
-    isPlaying: boolean
+    replayId: number
 }
 
-export function useReplay({ typed, isPlaying }: Params) {
+export function useReplay({ typed, replayId }: Params) {
     const [replayTyped, setReplayTyped] = useState<TypedChar[]>([])
-    const [replayIndex, setReplayIndex] = useState(0)
+    const [replayIndex, setReplayIndex] = useState(-1)
+
     const timeoutsRef = useRef<number[]>([])
 
     useEffect(() => {
-        function clearPreviousReplay() {
+        function clear() {
             timeoutsRef.current.forEach(clearTimeout)
             timeoutsRef.current = []
         }
 
-        function setReplay() {
+        function reset() {
             setReplayTyped([])
-            setReplayIndex(0)
+            setReplayIndex(-1)
         }
 
-        clearPreviousReplay()
-        setReplay()
+        clear()
+        reset()
 
-        if (!isPlaying) return
         if (typed.length === 0) return
 
         typed.forEach((char, index) => {
@@ -44,10 +44,8 @@ export function useReplay({ typed, isPlaying }: Params) {
             timeoutsRef.current.push(timeout)
         })
 
-        return () => {
-            timeoutsRef.current.forEach(clearTimeout)
-        }
-    }, [typed, isPlaying])
+        return clear
+    }, [typed, replayId])
 
     return {
         replayTyped,

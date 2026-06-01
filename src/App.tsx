@@ -1,12 +1,13 @@
-// import { useState } from "react"
+import { useState } from "react"
 
 import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { Keyboard } from "./features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMetrics"
-import TypingTextDisplay from "./ui/TypingTextDisplay"
-import Metrics from "./ui/Metrics"
+import TypingTextDisplay from "./features/typing/components/TypingTextDisplay"
+import Metrics from "./features/stats/components/Metrics"
 import useTypingSession from "./core/engine/hooks/useTypingSession"
 import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
+import ReplayModal from "./features/components/ReplayModal"
 
 const TIME_DURATIONS = [15, 30, 45, 60, 120]
 
@@ -33,6 +34,7 @@ export default function App() {
     // const [soundEnabled, setSoundEnabled] = useState(false)
     // const [volume, setVolume] = useState(0.5)
 
+    const [isReplayOpen, setIsReplayOpen] = useState(false)
     const elapsedMs = (duration - remainingTime) * 1000
     const metrics = calculateTypingMetrics({
         typed,
@@ -97,7 +99,9 @@ export default function App() {
                     {isResults && (
                         <div className="flex gap-4">
                             <button onClick={resetSession}>Restart</button>
-                            <button>Replay</button>
+                            <button onClick={() => setIsReplayOpen(true)}>
+                                Replay
+                            </button>
                         </div>
                     )}
                     {isTyping && <button onClick={pause}>Pause</button>}
@@ -122,6 +126,13 @@ export default function App() {
             />
 
             {isResults && <Metrics metrics={metrics} />}
+
+            <ReplayModal
+                open={isReplayOpen}
+                onClose={() => setIsReplayOpen(false)}
+                typed={typed}
+                words={words}
+            />
         </div>
     )
 }

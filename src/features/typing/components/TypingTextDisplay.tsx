@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 
-import { cn } from "../utils/cn"
+import { cn } from "../../../utils/cn"
 
 type TypingTextDisplayProps = {
     displayIndex: number
