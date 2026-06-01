@@ -29,11 +29,6 @@ export default function useTypingSession() {
         session.resume()
     }
 
-    const startReplay = () => {
-        session.replay()
-        timer.stop()
-    }
-
     const resetSession = () => {
         engine.restart()
         timer.restart()
@@ -57,9 +52,7 @@ export default function useTypingSession() {
         }
 
         if (
-            (session.mode === "paused" ||
-                session.mode === "results" ||
-                session.mode === "replay") &&
+            (session.mode === "paused" || session.mode === "results") &&
             timer.isRunning
         ) {
             timer.stop()
@@ -92,10 +85,8 @@ export default function useTypingSession() {
         isTyping: session.mode === "typing",
         isPaused: session.mode === "paused",
         isResults: session.mode === "results",
-        isReplay: session.mode === "replay",
         pause,
         resume,
-        startReplay,
         resetSession,
         handleDurationChange,
     }

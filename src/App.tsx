@@ -6,6 +6,7 @@ import { calculateTypingMetrics } from "./features/stats/utils/calculateTypingMe
 import TypingTextDisplay from "./ui/TypingTextDisplay"
 import Metrics from "./ui/Metrics"
 import useTypingSession from "./core/engine/hooks/useTypingSession"
+import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
 
 const TIME_DURATIONS = [15, 30, 45, 60, 120]
 
@@ -38,21 +39,13 @@ export default function App() {
         elapsedMs,
     })
 
-    // const [isReplayMode, setIsReplayMode] = useState(false)
+    const keyboardMode = isResults ? "heat" : "live"
+    const heatmap = calculateKeyboardHeatmap(typed)
+
     // const { replayTyped, replayIndex } = useReplay({
     //     typed,
     //     isPlaying: isReplayMode,
     // })
-
-    // const metrics = isTimedOut
-    //     ? calculateTypingMetrics({
-    //           typed,
-    //           elapsedMs,
-    //       })
-    //     : null
-    // const heatmap = calculateKeyboardHeatmap(typed)
-
-    // const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
 
     // const replayLastInput =
     //     replayIndex >= 0
@@ -61,9 +54,6 @@ export default function App() {
     //               status: replayTyped[replayIndex]?.status,
     //           }
     //         : null
-    // const displayLastInput = isReplayMode ? replayLastInput : lastInput
-
-    // const keyboardMode = isReplayMode ? "live" : isTimedOut ? "heat" : "live"
 
     return (
         <div className="flex flex-col min-h-screen bg-black text-white">
@@ -103,12 +93,17 @@ export default function App() {
                     globalIndex={globalIndex}
                 />
 
-                {isResults && <button onClick={resetSession}>Restart</button>}
-                {isTyping && <button onClick={pause}>Pause</button>}
-                {isPaused && <button onClick={resume}>Resume</button>}
-            </div>
-
-            {/* {isTimedOut && (
+                <div>
+                    {isResults && (
+                        <div className="flex gap-4">
+                            <button onClick={resetSession}>Restart</button>
+                            <button>Replay</button>
+                        </div>
+                    )}
+                    {isTyping && <button onClick={pause}>Pause</button>}
+                    {isPaused && <button onClick={resume}>Resume</button>}
+                </div>
+                {/* {isTimedOut && (
                 <div>
                     <button
                         onClick={() => setIsReplayMode(true)}
@@ -118,11 +113,12 @@ export default function App() {
                     </button>
                 </div>
             )} */}
+            </div>
 
             <Keyboard
                 lastInput={lastInput}
-                // heatmap={heatmap}
-                // mode={keyboardMode}
+                heatmap={heatmap}
+                mode={keyboardMode}
             />
 
             {isResults && <Metrics metrics={metrics} />}

@@ -1,5 +1,5 @@
 type State = {
-    mode: "idle" | "typing" | "paused" | "results" | "replay"
+    mode: "idle" | "typing" | "paused" | "results"
 }
 
 type Action =
@@ -7,14 +7,10 @@ type Action =
     | { type: "TIMER_UPDATE"; payload: { isExpired: boolean } }
     | { type: "PAUSE" }
     | { type: "RESUME" }
-    | { type: "REPLAY" }
     | { type: "RESET" }
 
 export function sessionReducer(state: State, action: Action): State {
     switch (action.type) {
-        case "REPLAY":
-            return { mode: "replay" }
-
         case "RESET":
             return { mode: "idle" }
 

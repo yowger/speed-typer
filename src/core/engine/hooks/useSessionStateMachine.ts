@@ -32,7 +32,6 @@ export function useSessionStateMachine({ engine, timer, text }: SessionInput) {
         })
     }, [timer.isExpired])
 
-    const replay = () => dispatch({ type: "REPLAY" })
     const reset = () => dispatch({ type: "RESET" })
     const pause = () => dispatch({ type: "PAUSE" })
     const resume = () => dispatch({ type: "RESUME" })
@@ -40,7 +39,6 @@ export function useSessionStateMachine({ engine, timer, text }: SessionInput) {
     return {
         mode: state.mode,
         dispatch,
-        replay,
         reset,
         pause,
         resume,
