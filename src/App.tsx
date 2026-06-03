@@ -68,7 +68,7 @@ export default function App() {
                 <span>Duration: {duration}s</span>
             </div>
 
-            <div className="max-w-4xl flex flex-col">
+            <div className="max-w-4xl flex flex-col gap-8">
                 <div className="inline-flex bg-surface rounded-lg px-3 py-1.5 self-center items-center gap-2">
                     <div className="flex items-center">
                         <TimerIcon className="w-4 h-4 mr-1 text-accent" />
@@ -88,17 +88,28 @@ export default function App() {
                                         : "text-foreground",
                                 )}
                             >
-                                {value}
+                                {value}s
                             </button>
                         ))}
                     </div>
+                </div>
+
+                <div className="flex gap-4 items-center">
+                    <div className="w-full h-1.5 bg-surface rounded-full overflow-hidden border border-white/5">
+                        <div className="h-full w-3/4 bg-accent"></div>
+                    </div>
+                    <span
+                        className="text-accent text-lg font-semibold"
+                        style={{ transition: "width 1s linear" }}
+                    >
+                        {remainingTime}
+                    </span>
                 </div>
 
                 <TypingTextDisplay
                     displayIndex={currentIndex}
                     displayTyped={typed}
                     words={words}
-                    // globalIndex={globalIndex}
                 />
 
                 <div>
