@@ -8,8 +8,10 @@ import Metrics from "./features/stats/components/Metrics"
 import useTypingSession from "./core/engine/hooks/useTypingSession"
 import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
 import ReplayModal from "./features/components/ReplayModal"
+import { cn } from "./utils/cn"
+import { TimerIcon } from "lucide-react"
 
-const TIME_DURATIONS = [15, 30, 45, 60, 120]
+const TIME_DURATIONS = [15, 30, 60]
 
 export default function App() {
     const {
@@ -58,34 +60,38 @@ export default function App() {
     //         : null
 
     return (
-        <div className="flex flex-col min-h-screen bg-black text-white">
-            <div className="mt-8 max-w-4xl self-center">
-                {TIME_DURATIONS.map((value) => (
-                    <button
-                        key={value}
-                        onClick={() => handleDurationChange(value)}
-                        disabled={isTyping}
-                        className={`
-                px-3 py-1 rounded border
-                ${
-                    duration === value
-                        ? "bg-white text-black"
-                        : "bg-transparent text-white"
-                }
-            `}
-                    >
-                        {value}s
-                    </button>
-                ))}
+        <div className="font-sans flex flex-col min-h-screen bg-background text-foreground">
+            <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
+                <span>for debugging</span>
+                <span>Mode: {mode}</span>
+                <span>Time: {remainingTime}s</span>
+                <span>Duration: {duration}s</span>
+            </div>
 
-                <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
-                    <span>Mode: {mode}</span>
-                    <span>Time: {remainingTime}s</span>
-                    <span>Duration: {duration}s</span>
+            <div className="max-w-4xl flex flex-col">
+                <div className="inline-flex bg-surface rounded-lg px-3 py-1.5 self-center items-center gap-2">
+                    <div className="flex items-center">
+                        <TimerIcon className="w-4 h-4 mr-1 text-accent" />
+                        <span className="text-accent">time</span>
+                    </div>
 
-                    {isResults && (
-                        <span className="text-red-500">Finished</span>
-                    )}
+                    <div>
+                        {TIME_DURATIONS.map((value) => (
+                            <button
+                                key={value}
+                                onClick={() => handleDurationChange(value)}
+                                disabled={isTyping}
+                                className={cn(
+                                    "text-sm px-2 py-1 cursor-pointer",
+                                    duration === value
+                                        ? "text-accent"
+                                        : "text-foreground",
+                                )}
+                            >
+                                {value}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <TypingTextDisplay
