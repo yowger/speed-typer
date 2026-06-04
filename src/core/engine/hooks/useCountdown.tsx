@@ -24,16 +24,13 @@ export function useCountdown(duration: number) {
         setRunning(false)
     }, [])
 
-    const restart = useCallback(() => {
-        setRemainingTime(duration)
-        setRunning(false)
-    }, [duration])
-
-    useEffect(() => {
-        const setTime = () => setRemainingTime(duration)
-
-        setTime()
-    }, [duration])
+    const restart = useCallback(
+        (newDuration?: number) => {
+            setRemainingTime(newDuration ?? duration)
+            setRunning(false)
+        },
+        [duration],
+    )
 
     return {
         duration,

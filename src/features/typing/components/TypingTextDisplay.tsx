@@ -29,8 +29,8 @@ export default function TypingTextDisplay({
     const flatChars = words.flat()
 
     return (
-        <div className="p-8 h-52 overflow-y-auto">
-            <div className="flex flex-wrap text-xl font-mono gap-1">
+        <div className="overflow-y-auto">
+            <div className="flex flex-wrap text-xl font-mono leading gap-y-1">
                 {flatChars.map((char, index) => {
                     const typedChar = displayTyped[index]
                     const isCurrentChar = index === displayIndex
@@ -40,9 +40,9 @@ export default function TypingTextDisplay({
                             key={index}
                             ref={isCurrentChar ? currentCharRef : null}
                             className={cn(
-                                "border-b-4 border-transparent transition-colors",
+                                "border-b-3 border-transparent transition-colors",
 
-                                isCurrentChar && "border-b-4 border-white",
+                                isCurrentChar && "border-b-3 border-white",
 
                                 typedChar?.status === "correct" &&
                                     "text-green-500",

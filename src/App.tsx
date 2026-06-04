@@ -10,6 +10,7 @@ import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeybo
 import ReplayModal from "./features/components/ReplayModal"
 import { cn } from "./utils/cn"
 import { TimerIcon } from "lucide-react"
+import TimerProgress from "./components/TimerProgress"
 
 const TIME_DURATIONS = [15, 30, 60]
 
@@ -94,17 +95,10 @@ export default function App() {
                     </div>
                 </div>
 
-                <div className="flex gap-4 items-center">
-                    <div className="w-full h-1.5 bg-surface rounded-full overflow-hidden border border-white/5">
-                        <div className="h-full w-3/4 bg-accent"></div>
-                    </div>
-                    <span
-                        className="text-accent text-lg font-semibold"
-                        style={{ transition: "width 1s linear" }}
-                    >
-                        {remainingTime}
-                    </span>
-                </div>
+                <TimerProgress
+                    duration={duration}
+                    remainingTime={remainingTime}
+                />
 
                 <TypingTextDisplay
                     displayIndex={currentIndex}

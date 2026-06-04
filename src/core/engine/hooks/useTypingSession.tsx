@@ -31,7 +31,7 @@ export default function useTypingSession() {
 
     const resetSession = () => {
         engine.restart()
-        timer.restart()
+        timer.restart(timer.duration)
         textSystem.reset()
         session.reset()
     }
@@ -39,7 +39,10 @@ export default function useTypingSession() {
     const handleDurationChange = (value: number) => {
         setTypingDuration(value)
 
-        resetSession()
+        engine.restart()
+        timer.restart(value)
+        textSystem.reset()
+        session.reset()
     }
 
     useEffect(() => {

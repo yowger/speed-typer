@@ -35,7 +35,7 @@ export function KeyboardKey({
             ? state === "active"
                 ? "scale-95 bg-gray-700 border-gray-500"
                 : state === "correct"
-                  ? "scale-95 bg-green-600/30 border-green-500 text-green-200"
+                  ? "scale-95 bg-accent border-border text-green-200"
                   : state === "incorrect"
                     ? "scale-95 bg-red-600/30 border-red-500 text-red-200"
                     : "bg-zinc-900 border-zinc-700"
