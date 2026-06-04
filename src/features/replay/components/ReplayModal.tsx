@@ -1,10 +1,10 @@
 import { useState } from "react"
 
 import { Dialog, DialogPanel } from "@headlessui/react"
-import { useReplay } from "../replay/hooks/useReplay"
-import TypingTextDisplay from "../typing/components/TypingTextDisplay"
+import { useReplay } from "../hooks/useReplay"
+import TypingTextDisplay from "../../typing/components/TypingTextDisplay"
 
-import type { KeyEvent } from "../../core/engine/types/engine"
+import type { KeyEvent } from "../../../core/engine/types/engine"
 
 type ReplayModalProps = {
     open: boolean

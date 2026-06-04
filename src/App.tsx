@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { Settings2Icon, TimerIcon } from "lucide-react"
 
 import { useTypingSounds } from "./core/sounds/hooks/useTypingSounds"
 import { Keyboard } from "./features/typing/components/Keyboard"
@@ -8,11 +7,17 @@ import TypingTextDisplay from "./features/typing/components/TypingTextDisplay"
 import Metrics from "./features/stats/components/Metrics"
 import useTypingSession from "./core/engine/hooks/useTypingSession"
 import { calculateKeyboardHeatmap } from "./features/typing/utils/calculateKeyboardHeatmap"
-import ReplayModal from "./features/components/ReplayModal"
-import { cn } from "./utils/cn"
-import TimerProgress from "./components/TimerProgress"
+import ReplayModal from "./features/replay/components/ReplayModal"
+import TimerProgress from "./features/typing/components/TimerProgress"
+import TimerControls from "./features/typing/components/TimerControls"
+import ModeControls from "./features/typing/components/ModeControls"
 
 const TIME_DURATIONS = [15, 30, 60]
+const TYPING_MODES = [
+    "words",
+    "numbers",
+    // "quotes", "symbols", "code"
+] as const
 
 export default function App() {
     const {
@@ -47,6 +52,9 @@ export default function App() {
     const keyboardMode = isResults ? "heat" : "live"
     const heatmap = calculateKeyboardHeatmap(keyEvents)
 
+    const [typingMode, setTypingMode] =
+        useState<(typeof TYPING_MODES)[number]>("words")
+
     // const { replayTyped, replayIndex } = useReplay({
     //     typed,
     //     isPlaying: isReplayMode,
@@ -69,64 +77,21 @@ export default function App() {
                 <span>Duration: {duration}s</span>
             </div>
 
-            <div className="max-w-4xl flex flex-col gap-8 mx-auto">
+            <div className="max-w-4xl flex flex-col gap-8 mx-auto px-8">
                 <div className="flex self-center items-center gap-8">
-                    <div className="inline-flex bg-surface rounded-lg px-3 py-1.5 gap-8">
-                        <div className="flex items-center">
-                            <TimerIcon className="w-4 h-4 mr-1 text-accent" />
-                            <span className="text-accent">time</span>
-                        </div>
+                    <TimerControls
+                        durations={TIME_DURATIONS}
+                        duration={duration}
+                        isTyping={isTyping}
+                        onDurationChange={handleDurationChange}
+                    />
 
-                        <div className="flex gap-4">
-                            {TIME_DURATIONS.map((value) => (
-                                <button
-                                    key={value}
-                                    onClick={() => handleDurationChange(value)}
-                                    disabled={isTyping}
-                                    className={cn(
-                                        "text-sm cursor-pointer",
-                                        duration === value
-                                            ? "text-accent"
-                                            : "text-foreground",
-                                    )}
-                                >
-                                    {value}s
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="inline-flex bg-surface rounded-lg px-3 py-1.5 self-center items-center gap-8">
-                        <div className="flex items-center">
-                            <Settings2Icon className="w-4 h-4 mr-1 text-accent" />
-                            <span className="text-accent">Mode</span>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <button
-                                className={cn(
-                                    "text-sm cursor-pointer",
-                                    duration
-                                        ? "text-accent"
-                                        : "text-foreground",
-                                )}
-                            >
-                                Words
-                            </button>
-                            <button
-                                className={cn(
-                                    "text-sm cursor-pointer",
-                                    duration
-                                        ? // ? "text-accent"
-                                          // : "text-foreground",
-                                          "text-foreground"
-                                        : "text-accent",
-                                )}
-                            >
-                                Numbers
-                            </button>
-                        </div>
-                    </div>
+                    <ModeControls
+                        modes={TYPING_MODES}
+                        mode={typingMode}
+                        isTyping={isTyping}
+                        onModeChange={setTypingMode}
+                    />
                 </div>
 
                 <TimerProgress
