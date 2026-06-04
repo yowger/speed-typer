@@ -45,7 +45,8 @@ export default function TypingTextDisplay({
                                 isCurrentChar && "border-b-3 border-white",
 
                                 typedChar?.status === "correct" &&
-                                    "text-green-500",
+                                    // "text-green-500",
+                                    "text-white",
 
                                 typedChar?.status === "incorrect" &&
                                     char === " "
