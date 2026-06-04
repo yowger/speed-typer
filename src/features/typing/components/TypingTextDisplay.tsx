@@ -26,42 +26,50 @@ export default function TypingTextDisplay({
         })
     }, [displayIndex])
 
-    const flatChars = words.flat()
+    let globalIndex = 0
 
     return (
         <div className="overflow-y-auto">
             <div className="flex flex-wrap text-xl font-mono leading gap-y-1">
-                {flatChars.map((char, index) => {
-                    const typedChar = displayTyped[index]
-                    const isCurrentChar = index === displayIndex
+                {words.map((word, wordIndex) => (
+                    <div key={wordIndex} className="flex whitespace-nowrap">
+                        {word.map((char, charIndex) => {
+                            const index = globalIndex++
 
-                    return (
-                        <span
-                            key={index}
-                            ref={isCurrentChar ? currentCharRef : null}
-                            className={cn(
-                                "border-b-3 border-transparent transition-colors",
+                            const typedChar = displayTyped[index]
+                            const isCurrentChar = index === displayIndex
 
-                                isCurrentChar && "border-b-3 border-white",
+                            return (
+                                <span
+                                    key={charIndex}
+                                    ref={isCurrentChar ? currentCharRef : null}
+                                    className={cn(
+                                        "border-b-3 border-transparent transition-colors",
 
-                                typedChar?.status === "correct" &&
-                                    // "text-green-500",
-                                    "text-white",
+                                        isCurrentChar &&
+                                            "border-b-3 border-white",
 
-                                typedChar?.status === "incorrect" &&
-                                    char === " "
-                                    ? "bg-red-500/30"
-                                    : typedChar?.status === "incorrect"
-                                      ? "text-red-500"
-                                      : "",
+                                        typedChar?.status === "correct" &&
+                                            "text-white",
 
-                                !typedChar && !isCurrentChar && "text-gray-500",
-                            )}
-                        >
-                            {char === " " ? SPACE : char}
-                        </span>
-                    )
-                })}
+                                        typedChar?.status === "incorrect" &&
+                                            char === " "
+                                            ? "bg-red-500/30"
+                                            : typedChar?.status === "incorrect"
+                                              ? "text-red-500"
+                                              : "",
+
+                                        !typedChar &&
+                                            !isCurrentChar &&
+                                            "text-gray-500",
+                                    )}
+                                >
+                                    {char === " " ? SPACE : char}
+                                </span>
+                            )
+                        })}
+                    </div>
+                ))}
             </div>
         </div>
     )
