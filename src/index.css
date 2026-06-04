@@ -10,11 +10,31 @@
     --color-foreground: #fafafa;
     --color-muted: #71717a;
     --color-accent: #3b82f6;
-    --color-border: #1e293b;
     --color-primary: #e4e4e7;
     --color-primary-foreground: #09090b;
     --color-correct: #22c55e;
     --color-incorrect: #ef4444;
     --color-cursor: #fafafa;
     --color-border: #27272a;
+}
+
+.typing-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.typing-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.typing-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.typing-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-muted) 30%, transparent);
+}
+
+.typing-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
 }

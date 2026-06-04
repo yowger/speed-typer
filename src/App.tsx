@@ -12,7 +12,7 @@ import TimerProgress from "./features/typing/components/TimerProgress"
 import TimerControls from "./features/typing/components/TimerControls"
 import ModeControls from "./features/typing/components/ModeControls"
 
-const TIME_DURATIONS = [15, 30, 60]
+const TIME_DURATIONS = [15, 30, 60, 300]
 const TYPING_MODES = [
     "words",
     "numbers",
