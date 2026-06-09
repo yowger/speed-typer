@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { KeyboardKey } from "./KeyboardKey"
-import { KEYBOARD_ROWS } from "./keyBoardLayout"
+import { KEYBOARD_ROWS } from "../keyBoardLayout"
 
 type KeyState = "active" | "correct" | "incorrect"
 
