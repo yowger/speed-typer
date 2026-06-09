@@ -11,8 +11,9 @@ import ReplayModal from "./features/replay/components/ReplayModal"
 import TimerProgress from "./features/typing/components/TimerProgress"
 import TimerControls from "./features/typing/components/TimerControls"
 import ModeControls from "./features/typing/components/ModeControls"
+import Navbar from "./ui/layout/navbar"
 
-const TIME_DURATIONS = [15, 30, 60, 300]
+const TIME_DURATIONS = [15, 30, 60]
 const TYPING_MODES = [
     "words",
     "numbers",
@@ -70,6 +71,7 @@ export default function App() {
 
     return (
         <div className="font-sans flex flex-col min-h-screen bg-background text-foreground">
+            <Navbar />
             <div className="px-8 text-sm text-gray-400 mb-4 flex gap-4">
                 <span>for debugging</span>
                 <span>Mode: {mode}</span>
