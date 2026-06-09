@@ -31,12 +31,20 @@ export function sessionReducer(state: State, action: Action): State {
         case "ENGINE_UPDATE": {
             const { index, textLength } = action.payload
 
-            if (state.mode === "idle" && index > 0) {
-                return { mode: "typing" }
-            }
+            if (!textLength) return state
 
-            if (index >= textLength) {
-                return { mode: "results" }
+            switch (state.mode) {
+                case "idle":
+                    if (index > 0) {
+                        return { mode: "typing" }
+                    }
+                    break
+
+                case "typing":
+                    if (index >= textLength) {
+                        return { mode: "results" }
+                    }
+                    break
             }
 
             return state

@@ -1,17 +1,17 @@
 import { useState } from "react"
 
 import { useTypingSounds } from "../core/sounds/hooks/useTypingSounds"
-import { Keyboard } from "../features/typing/components/Keyboard"
+// import { Keyboard } from "../features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "../features/stats/utils/calculateTypingMetrics"
 import TypingTextDisplay from "../features/typing/components/TypingTextDisplay"
 import Metrics from "../features/stats/components/Metrics"
 import useTypingSession from "../core/engine/hooks/useTypingSession"
-import { calculateKeyboardHeatmap } from "../features/typing/utils/calculateKeyboardHeatmap"
+// import { calculateKeyboardHeatmap } from "../features/typing/utils/calculateKeyboardHeatmap"
 import ReplayModal from "../features/replay/components/ReplayModal"
-import TimerProgress from "../features/typing/components/TimerProgress"
+// import TimerProgress from "../features/typing/components/TimerProgress"
 import TimerControls from "../features/typing/components/TimerControls"
 import ModeControls from "../features/typing/components/ModeControls"
-import Navbar from "../ui/layout/navbar"
+// import Navbar from "../ui/layout/navbar"
 
 const TIME_DURATIONS = [15, 30, 60]
 const TYPING_MODES = [
@@ -50,8 +50,8 @@ export default function HomePage() {
         elapsedMs,
     })
 
-    const keyboardMode = isResults ? "heat" : "live"
-    const heatmap = calculateKeyboardHeatmap(keyEvents)
+    // const keyboardMode = isResults ? "heat" : "live"
+    // const heatmap = calculateKeyboardHeatmap(keyEvents)
 
     const [typingMode, setTypingMode] =
         useState<(typeof TYPING_MODES)[number]>("words")
@@ -71,15 +71,8 @@ export default function HomePage() {
 
     return (
         <div className="">
-            <div className="">
-                <div className="text-sm text-gray-400 mb-4 flex gap-4">
-                    <span>for debugging</span>
-                    <span>Mode: {mode}</span>
-                    <span>Time: {remainingTime}s</span>
-                    <span>Duration: {duration}s</span>
-                </div>
-
-                <div className="flex gap-8">
+            <div className="flex flex-col gap-8">
+                <div className="flex gap-8 self-center">
                     <TimerControls
                         durations={TIME_DURATIONS}
                         duration={duration}
@@ -95,10 +88,10 @@ export default function HomePage() {
                     />
                 </div>
 
-                <TimerProgress
+                {/* <TimerProgress
                     duration={duration}
                     remainingTime={remainingTime}
-                />
+                /> */}
 
                 <TypingTextDisplay
                     displayIndex={currentIndex}
@@ -118,6 +111,14 @@ export default function HomePage() {
                     {isTyping && <button onClick={pause}>Pause</button>}
                     {isPaused && <button onClick={resume}>Resume</button>}
                 </div>
+
+                <div className="text-sm text-gray-400 mb-4 flex gap-4">
+                    <span>for debugging</span>
+                    <span>Mode: {mode}</span>
+                    <span>Time: {remainingTime}s</span>
+                    <span>Duration: {duration}s</span>
+                </div>
+
                 {/* {isTimedOut && (
                 <div>
                     <button
@@ -130,11 +131,11 @@ export default function HomePage() {
             )} */}
             </div>
 
-            <Keyboard
+            {/* <Keyboard
                 lastInput={lastInput}
                 heatmap={heatmap}
                 mode={keyboardMode}
-            />
+            /> */}
 
             {isResults && <Metrics metrics={metrics} />}
 

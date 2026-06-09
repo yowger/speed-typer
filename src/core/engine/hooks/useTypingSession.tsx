@@ -74,6 +74,12 @@ export default function useTypingSession() {
         setTypingMode()
     }, [session.mode])
 
+    console.log({
+        textLength: textSystem.text.length,
+        currentIndex: engine.currentIndex,
+        mode: session.mode,
+    })
+
     return {
         typed: engine.typed,
         keyEvents: engine.keyEvents,
