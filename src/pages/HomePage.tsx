@@ -11,6 +11,7 @@ import ReplayModal from "../features/replay/components/ReplayModal"
 // import TimerProgress from "../features/typing/components/TimerProgress"
 import TimerControls from "../features/typing/components/TimerControls"
 import ModeControls from "../features/typing/components/ModeControls"
+import { generateMetricHistory } from "./generateMetricHistory"
 // import Navbar from "../ui/layout/navbar"
 
 const TIME_DURATIONS = [15, 30, 60]
@@ -49,6 +50,7 @@ export default function HomePage() {
         keyEvents,
         elapsedMs,
     })
+    const history = generateMetricHistory(keyEvents)
 
     // const keyboardMode = isResults ? "heat" : "live"
     // const heatmap = calculateKeyboardHeatmap(keyEvents)
@@ -137,7 +139,7 @@ export default function HomePage() {
                 mode={keyboardMode}
             /> */}
 
-            {isResults && <Metrics metrics={metrics} />}
+            {isResults && <Metrics metrics={metrics} history={history} />}
 
             <ReplayModal
                 open={isReplayOpen}
