@@ -24,10 +24,26 @@ type MetricsProps = {
 }
 
 export default function Metrics({ metrics, history }: MetricsProps) {
-    const tickStep = history.length <= 20 ? 2 : history.length <= 60 ? 5 : 10
+    const tickStep = history.length <= 20 ? 2 : history.length <= 60 ? 3 : 7
 
     return (
         <div className="space-y-8">
+            <div className="flex gap-8">
+                <div className="pr-8 border-r border-border flex flex-col">
+                    <div className="text-sm text-muted lowercase">wpm</div>
+                    <div className="text-6xl text-accent font-light">
+                        {metrics.adjustedWpm}
+                    </div>
+                </div>
+
+                <div className="flex flex-col mt-auto">
+                    <div className="text-sm text-muted lowercase">acc</div>
+                    <div className="text-3xl text-gray-100 font-light">
+                        {metrics.accuracy}%
+                    </div>
+                </div>
+            </div>
+
             <div className="h-56 w-full">
                 <ResponsiveContainer>
                     <AreaChart data={history}>
@@ -90,12 +106,10 @@ export default function Metrics({ metrics, history }: MetricsProps) {
                 </ResponsiveContainer>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))]">
                 <MetricCard label="Raw WPM" value={metrics.rawWpm} />
 
                 <MetricCard label="Adjusted WPM" value={metrics.adjustedWpm} />
-
-                <MetricCard label="Accuracy" value={`${metrics.accuracy}%`} />
 
                 <MetricCard label="CPM" value={metrics.cpm} />
 
@@ -120,9 +134,9 @@ type MetricCardProps = {
 
 function MetricCard({ label, value }: MetricCardProps) {
     return (
-        <div className="rounded-lg border border-border bg-surface p-4">
-            <div className="text-muted">{label}</div>
-            <div className="text-2xl font-semibold">{value}</div>
+        <div className="border border-border bg-background p-4">
+            <div className="text-sm text-muted lowercase">{label}</div>
+            <div className="text-xl text-gray-100">{value}</div>
         </div>
     )
 }

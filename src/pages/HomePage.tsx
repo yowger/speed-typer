@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import { useTypingSounds } from "../core/sounds/hooks/useTypingSounds"
-import { Keyboard } from "../features/typing/components/Keyboard"
+// import { Keyboard } from "../features/typing/components/Keyboard"
 import { calculateTypingMetrics } from "../features/stats/utils/calculateTypingMetrics"
 import TypingTextDisplay from "../features/typing/components/TypingTextDisplay"
 import Metrics from "../features/stats/components/Metrics"
@@ -109,9 +109,9 @@ export default function HomePage() {
 
                             <div className="flex gap-4">
                                 <button onClick={resetSession}>Restart</button>
-                                <button onClick={() => setIsReplayOpen(true)}>
+                                {/* <button onClick={() => setIsReplayOpen(true)}>
                                     Replay
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                         {/* {isTyping && <button onClick={pause}>Pause</button>}
@@ -139,11 +139,11 @@ export default function HomePage() {
 
                 {/*
                  */}
-                <Keyboard
+                {/* <Keyboard
                     lastInput={lastInput}
                     // heatmap={heatmap}
                     // mode={keyboardMode}
-                />
+                /> */}
 
                 {isResults && <Metrics metrics={metrics} history={history} />}
 

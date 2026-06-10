@@ -4,10 +4,12 @@
 @theme {
     --font-sans: "IBM Plex Sans", sans-serif;
     --font-mono: "JetBrains Mono", monospace;
-    --color-background: #0a0a0a;
+    /* --color-background: #0a0a0a; */
+    --color-background: #1a1a1a;
     --color-surface: #18181b;
     --color-surface-hover: #27272a;
-    --color-foreground: #fafafa;
+    /* --color-foreground: #fafafa; */
+    --color-foreground: #646669;
     --color-muted: #71717a;
     --color-accent: #3b82f6;
     --color-primary: #e4e4e7;
