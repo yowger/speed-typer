@@ -1,10 +1,12 @@
 import {
-    LineChart,
-    Line,
     XAxis,
     YAxis,
     ResponsiveContainer,
     Tooltip,
+    Area,
+    AreaChart,
+    Line,
+    CartesianGrid,
 } from "recharts"
 
 import type { TypingMetricsReturn } from "../utils/calculateTypingMetrics"
@@ -22,28 +24,69 @@ type MetricsProps = {
 }
 
 export default function Metrics({ metrics, history }: MetricsProps) {
+    const tickStep = history.length <= 20 ? 2 : history.length <= 60 ? 5 : 10
+
     return (
         <div className="space-y-8">
             <div className="h-56 w-full">
                 <ResponsiveContainer>
-                    <LineChart data={history}>
-                        <XAxis dataKey="second" />
-                        <YAxis />
+                    <AreaChart data={history}>
+                        <CartesianGrid stroke="#2a2727" />
+                        <defs>
+                            <linearGradient
+                                id="wpmGradient"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="5%"
+                                    stopColor="#3b82f6"
+                                    stopOpacity={0.3}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor="#3b82f6"
+                                    stopOpacity={0}
+                                />
+                            </linearGradient>
+                        </defs>
+
+                        <XAxis
+                            dataKey="second"
+                            ticks={history
+                                .map((point) => point.second)
+                                .filter((second) => second % tickStep === 0)}
+                        />
+
+                        <YAxis
+                            label={{
+                                value: "WPM",
+                                angle: -90,
+                                position: "insideLeft",
+                            }}
+                        />
+
                         <Tooltip />
 
-                        <Line
+                        <Area
                             type="monotone"
                             dataKey="adjustedWpm"
-                            dot={false}
+                            stroke="#3b82f6"
+                            fill="url(#wpmGradient)"
+                            strokeWidth={2}
                         />
 
                         <Line
                             type="monotone"
                             dataKey="rawWpm"
+                            stroke="#94a3b8"
+                            strokeWidth={2}
+                            strokeDasharray="5 5"
                             dot={false}
-                            strokeDasharray="4 4"
                         />
-                    </LineChart>
+                    </AreaChart>
                 </ResponsiveContainer>
             </div>
 

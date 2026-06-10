@@ -30,7 +30,7 @@ export default function TypingTextDisplay({
 
     return (
         <div className="overflow-y-auto h-52 typing-scroll">
-            <div className="flex flex-wrap text-xl font-mono leading gap-y-1">
+            <div className="flex flex-wrap text-lg md:text-xl font-mono leading gap-y-1">
                 {words.map((word, wordIndex) => (
                     <div key={wordIndex} className="flex whitespace-nowrap">
                         {word.map((char, charIndex) => {
