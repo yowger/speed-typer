@@ -1,7 +1,7 @@
-import { KeyEvent } from "../core/engine/types/engine"
-import { calculateAccuracy } from "../features/stats/utils/calculateAccuracy"
-import { calculateAdjustedWpm } from "../features/stats/utils/calculateAdjustedWpm"
-import { calculateRawWpm } from "../features/stats/utils/calculateRawWpm"
+import { type KeyEvent } from "../../../core/engine/types/engine"
+import { calculateAccuracy } from "../utils/calculateAccuracy"
+import { calculateAdjustedWpm } from "../utils/calculateAdjustedWpm"
+import { calculateRawWpm } from "../utils/calculateRawWpm"
 
 export type MetricHistoryPoint = {
     second: number
