@@ -12,6 +12,8 @@ import TimerProgress from "../features/typing/components/TimerProgress"
 import TimerControls from "../features/typing/components/TimerControls"
 import ModeControls from "../features/typing/components/ModeControls"
 import { generateMetricHistory } from "../features/stats/utils/generateMetricHistory"
+import { Keyboard } from "../features/typing/components/Keyboard"
+import { calculateKeyboardHeatmap } from "../features/typing/utils/calculateKeyboardHeatmap"
 // import { generateMetricHistory } from "./generateMetricHistory"
 // import { Keyboard } from "lucide-react"
 // import Navbar from "../ui/layout/navbar"
@@ -54,8 +56,8 @@ export default function HomePage() {
     })
     const history = generateMetricHistory(keyEvents)
 
-    // const keyboardMode = isResults ? "heat" : "live"
-    // const heatmap = calculateKeyboardHeatmap(keyEvents)
+    const keyboardMode = isResults ? "heat" : "live"
+    const heatmap = calculateKeyboardHeatmap(keyEvents)
 
     const [typingMode, setTypingMode] =
         useState<(typeof TYPING_MODES)[number]>("words")
@@ -140,11 +142,11 @@ export default function HomePage() {
 
                 {/*
                  */}
-                {/* <Keyboard
+                <Keyboard
                     lastInput={lastInput}
-                    // heatmap={heatmap}
-                    // mode={keyboardMode}
-                /> */}
+                    heatmap={heatmap}
+                    mode={keyboardMode}
+                />
 
                 {isResults && <Metrics metrics={metrics} history={history} />}
 

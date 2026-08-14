@@ -24,7 +24,7 @@ type MetricsProps = {
 }
 
 export default function Metrics({ metrics, history }: MetricsProps) {
-    const tickStep = history.length <= 20 ? 2 : history.length <= 60 ? 3 : 7
+    const tickStep = history.length <= 20 ? 2 : history.length <= 60 ? 3 : 5
 
     return (
         <div className="space-y-8">
